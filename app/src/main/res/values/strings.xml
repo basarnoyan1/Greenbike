@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">Greenbike</string>
+    <string name="title_activity_device_list">DeviceListActivity</string>
+</resources>
