@@ -3,9 +3,7 @@ package io.evall.greenbike;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.sql.Timestamp;
 import java.text.DateFormat;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.UUID;
@@ -13,58 +11,56 @@ import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.v4.content.ContextCompat;
-import android.view.View;
-import android.view.View.OnClickListener;
-import android.widget.Button;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 public class MainActivity extends Activity {
-
-    TextView txtArduino, txtString, txtStringLength,
-            sensorView2, sensorView3, sensorView4, sensorView5, sensorView6, sensorView7, sensorView8;
+    SharedPreferences sharedpref;
+    TextView nametxt, sensorView2, sensorView3, sensorView4, sensorView5, sensorView6, sensorView7, sensorView8;
     Handler bluetoothIn;
 
-    final int handlerState = 0;        				 //used to identify handler message
+    final int handlerState = 0;
     private BluetoothAdapter btAdapter = null;
     private BluetoothSocket btSocket = null;
     private StringBuilder recDataString = new StringBuilder();
 
     private ConnectedThread mConnectedThread;
-
-    // SPP UUID service - this should work for most devices
     private static final UUID BTMODULEUUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
-
-    // String for MAC address
     private static String address;
+
     boolean first = true;
     int frnum;
     double tire_dia = 0.66;//Lastik çapı 26"
     double wei = 75*9.81;//Ağırlık
     long frtime;
-/*
-    rp_wr : 75,        // weight of rider (kg)
-    rp_wb : 8,         // weight of bike (kg)
-    rp_a : 0.509,      // frontal area, rider+bike (m^2)
-    rp_cd : 0.63,      // drag coefficient Cd
-    rp_dtl : 3,        // drivetrain loss Loss_dt
-    ep_crr : 0.005,    // coefficient of rolling resistance Crr
-    ep_rho : 1.226,    // air density (kg / m^3)
-    ep_g : 0,          // grade of hill (%)
-    p2v : 200,         // 200 watts of power for the P2V field
-    v2p : 35           // 35kph for the V2P field
-* */
+        /*
+            rp_wr : 75,        // weight of rider (kg)
+            rp_wb : 8,         // weight of bike (kg)
+            rp_a : 0.509,      // frontal area, rider+bike (m^2)
+            rp_cd : 0.63,      // drag coefficient Cd
+            rp_dtl : 3,        // drivetrain loss Loss_dt
+            ep_crr : 0.005,    // coefficient of rolling resistance Crr
+            ep_rho : 1.226,    // air density (kg / m^3)
+            ep_g : 0,          // grade of hill (%)
+            p2v : 200,         // 200 watts of power for the P2V field
+            v2p : 35           // 35kph for the V2P field
+        */
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_main);
+        nametxt = (TextView) findViewById(R.id.name);
+        sharedpref = getSharedPreferences("appData", Context.MODE_PRIVATE);
+        String name = sharedpref.getString("userName",null);
+        nametxt.setText("Merhaba, " + name + "!");
         sensorView2 = (TextView) findViewById(R.id.sensorView2);
         sensorView3 = (TextView) findViewById(R.id.sensorView3);
         sensorView4 = (TextView) findViewById(R.id.sensorView4);
@@ -75,12 +71,12 @@ public class MainActivity extends Activity {
 
         bluetoothIn = new Handler() {
             public void handleMessage(android.os.Message msg) {
-                if (msg.what == handlerState) {										//if message is what we want
+                if (msg.what == handlerState) {
                     String readMessage = (String) msg.obj;
-                    recDataString.append(readMessage);      								//keep appending to string until ~
-                    int endOfLineIndex = recDataString.indexOf("~");                    // determine the end-of-line
-                    if (endOfLineIndex > 0) {                                           // make sure there data before ~
-                        String dataInPrint = recDataString.substring(0, endOfLineIndex);    // extract string
+                    recDataString.append(readMessage);
+                    int endOfLineIndex = recDataString.indexOf("~");
+                    if (endOfLineIndex > 0) {
+                        String dataInPrint = recDataString.substring(0, endOfLineIndex);
                         String sensor0 = dataInPrint.substring(dataInPrint.indexOf("#b4z8")+5, dataInPrint.length());
                         int value = Integer.parseInt(sensor0);
                         recDataString.delete(0, recDataString.length());
@@ -88,7 +84,7 @@ public class MainActivity extends Activity {
                             frnum = value;
                             first=!first;
                             frtime = System.nanoTime();}
-                        sensorView2.setText(Integer.toString(value-frnum));
+                        sensorView2.setText(Integer.toString(value-frnum) + " tur");
                         sensorView4.setText(String.format("%.3f",((value-frnum)*Math.PI*tire_dia/1000))+" km");
                         sensorView7.setText(String.format("%.2f",((value-frnum)*Math.PI*tire_dia/1000)*137)+" g CO2");
                         sensorView8.setText(String.format("%.2f",((value-frnum)*Math.PI*tire_dia/1000)*5)+" ağaç");
@@ -96,7 +92,6 @@ public class MainActivity extends Activity {
                         long tstamp = System.nanoTime();
                         try {
                             double diff = (tstamp - frtime) / 1e6;
-                            //sensorView3.setText(Double.toString(diff/1000)+" s");
                             Date date = new Date((long) Math.floor(diff-7200000));
                             DateFormat formatter = new SimpleDateFormat("HH:mm:ss");
                             String dateFormatted = formatter.format(date);
@@ -126,22 +121,14 @@ public class MainActivity extends Activity {
     @Override
     public void onResume() {
         super.onResume();
-
-        //Get MAC address from DeviceListActivity via intent
         Intent intent = getIntent();
-
-        //Get the MAC address from the DeviceListActivty via EXTRA
         address = intent.getStringExtra(DeviceListActivity.EXTRA_DEVICE_ADDRESS);
-
-        //create device and set the MAC address
-        BluetoothDevice device = btAdapter.getRemoteDevice(address);
-
         try {
+            BluetoothDevice device = btAdapter.getRemoteDevice(address);
             btSocket = createBluetoothSocket(device);
-        } catch (IOException e) {
+        } catch (Exception e) {
             Toast.makeText(getBaseContext(), "Socket creation failed", Toast.LENGTH_LONG).show();
         }
-        // Establish the Bluetooth socket connection.
         try
         {
             btSocket.connect();
@@ -156,9 +143,6 @@ public class MainActivity extends Activity {
         }
         mConnectedThread = new ConnectedThread(btSocket);
         mConnectedThread.start();
-
-        //I send a character when resuming.beginning transmission to check device is connected
-        //If it is not an exception will be thrown in the write method and finish() will be called
         mConnectedThread.write("x");
     }
 
@@ -168,14 +152,12 @@ public class MainActivity extends Activity {
         super.onPause();
         try
         {
-            //Don't leave Bluetooth sockets open when leaving activity
             btSocket.close();
         } catch (IOException e2) {
             //insert code to deal with this
         }
     }
 
-    //Checks that the Android device Bluetooth is available and prompts to be turned on if off
     private void checkBTState() {
 
         if(btAdapter==null) {
@@ -240,5 +222,6 @@ public class MainActivity extends Activity {
             }
         }
     }
+
 }
 

@@ -54,7 +54,8 @@
                                           <PersistentState>
                                             <option name="values">
                                               <map>
-                                                <entry key="color" value="cc9dff" />
+                                                <entry key="color" value="ffffff" />
+                                                <entry key="paddingPercent" value="30" />
                                               </map>
                                             </option>
                                           </PersistentState>
@@ -65,7 +66,7 @@
                                           <PersistentState>
                                             <option name="values">
                                               <map>
-                                                <entry key="url" value="jar:file:/C:/Program%20Files/Android/Android%20Studio/plugins/android/lib/android.jar!/images/material_design_icons/action/ic_lightbulb_outline_black_24dp.xml" />
+                                                <entry key="url" value="jar:file:/C:/Program%20Files/Android/Android%20Studio/plugins/android/lib/android.jar!/images/material_design_icons/hardware/ic_keyboard_voice_black_24dp.xml" />
                                               </map>
                                             </option>
                                           </PersistentState>
@@ -76,9 +77,10 @@
                                   <option name="values">
                                     <map>
                                       <entry key="assetType" value="IMAGE" />
+                                      <entry key="backgroundColor" value="ff9d6b" />
                                       <entry key="iconShape" value="NONE" />
-                                      <entry key="imageAsset" value="C:\Users\basar\Downloads\icons8-forest-96.png" />
-                                      <entry key="outputName" value="forest_icon" />
+                                      <entry key="imageAsset" value="C:\Users\basar\Desktop\Design\Work\Greenbike\greenbike.png" />
+                                      <entry key="outputName" value="gb_large" />
                                     </map>
                                   </option>
                                 </PersistentState>
