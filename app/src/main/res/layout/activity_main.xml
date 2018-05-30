@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/backColor"
+    android:background="@color/colorPrimary"
     android:theme="@style/AppTheme.NoActionBar">
 
     <View
@@ -21,32 +21,34 @@
         android:id="@+id/name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="16dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="116dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginLeft="24dp"
+        android:layout_marginStart="24dp"
         android:text="Merhaba, Başar!"
         android:textAppearance="@android:style/TextAppearance.Material"
         android:textColor="@color/colorPrimary"
         android:textSize="16sp"
         android:textStyle="bold"
-        app:fontFamily="casual"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:fontFamily="sans-serif-condensed"
+        app:layout_constraintBottom_toBottomOf="@+id/view11"
+        app:layout_constraintStart_toStartOf="parent" />
 
     <android.support.v7.widget.CardView
         android:id="@+id/cardView11"
         android:layout_width="0dp"
         android:layout_height="210dp"
+        android:layout_marginBottom="240dp"
         android:layout_marginEnd="12dp"
         android:layout_marginLeft="16dp"
         android:layout_marginRight="12dp"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="8dp"
         app:cardCornerRadius="25px"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/cardView9"
-        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/name">
+        app:layout_constraintTop_toBottomOf="@+id/name"
+        app:layout_constraintVertical_bias="0.7">
 
         <android.support.constraint.ConstraintLayout
             android:layout_width="match_parent"
@@ -61,7 +63,8 @@
                 android:layout_marginRight="16dp"
                 android:layout_marginTop="8dp"
                 android:text="0 km"
-                android:textSize="24sp"
+                android:textSize="22sp"
+                android:textStyle="bold"
                 app:layout_constraintBottom_toTopOf="@+id/line"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -75,6 +78,7 @@
                 android:layout_marginRight="8dp"
                 android:text="00:00:00"
                 android:textSize="22sp"
+                android:textStyle="bold"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/line" />
@@ -107,7 +111,7 @@
             <View
                 android:id="@+id/line"
                 android:layout_width="wrap_content"
-                android:layout_height="5px"
+                android:layout_height="1px"
                 android:layout_marginBottom="8dp"
                 android:layout_marginTop="8dp"
                 android:alpha="0.25"
@@ -122,14 +126,14 @@
 
     <android.support.v7.widget.CardView
         android:id="@+id/cardView9"
-        android:layout_width="170dp"
+        android:layout_width="180dp"
         android:layout_height="110dp"
         android:layout_marginEnd="16dp"
         android:layout_marginRight="16dp"
-        android:layout_marginTop="44dp"
+        android:layout_marginTop="28dp"
         app:cardCornerRadius="25px"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/name">
+        app:layout_constraintTop_toTopOf="@+id/cardView11">
 
         <android.support.constraint.ConstraintLayout
             android:layout_width="match_parent"
@@ -157,7 +161,8 @@
                 android:layout_marginRight="16dp"
                 android:layout_marginTop="8dp"
                 android:text="0 tur"
-                android:textSize="24sp"
+                android:textSize="22sp"
+                android:textStyle="bold"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -205,6 +210,7 @@
                 android:layout_marginTop="8dp"
                 android:text="0 km/h"
                 android:textSize="20sp"
+                android:textStyle="bold"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -251,7 +257,8 @@
                 android:layout_marginRight="16dp"
                 android:layout_marginTop="8dp"
                 android:text="0 ağaç"
-                android:textSize="20sp"
+                android:textSize="18sp"
+                android:textStyle="bold"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -262,15 +269,18 @@
         android:id="@+id/cardView14"
         android:layout_width="0dp"
         android:layout_height="70dp"
+        android:layout_marginBottom="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginLeft="16dp"
         android:layout_marginRight="8dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
         app:cardCornerRadius="25px"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/cardView9"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/cardView12">
+        app:layout_constraintTop_toBottomOf="@+id/cardView12"
+        app:layout_constraintVertical_bias="0.0">
 
         <android.support.constraint.ConstraintLayout
             android:layout_width="match_parent"
@@ -286,6 +296,7 @@
                 android:layout_marginTop="8dp"
                 android:text="0 W"
                 android:textSize="20sp"
+                android:textStyle="bold"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -309,15 +320,18 @@
         android:id="@+id/cardView16"
         android:layout_width="0dp"
         android:layout_height="90dp"
+        android:layout_marginBottom="8dp"
         android:layout_marginEnd="16dp"
         android:layout_marginLeft="8dp"
         android:layout_marginRight="16dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         app:cardCornerRadius="25px"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/cardView14"
-        app:layout_constraintTop_toBottomOf="@+id/cardView13">
+        app:layout_constraintTop_toBottomOf="@+id/cardView13"
+        app:layout_constraintVertical_bias="0.0">
 
         <android.support.constraint.ConstraintLayout
             android:layout_width="match_parent"
@@ -345,7 +359,8 @@
                 android:layout_marginRight="16dp"
                 android:layout_marginTop="8dp"
                 android:text="0 g CO2"
-                android:textSize="20sp"
+                android:textSize="18sp"
+                android:textStyle="bold"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
