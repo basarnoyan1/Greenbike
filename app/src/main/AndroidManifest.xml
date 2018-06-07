@@ -11,11 +11,13 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/bike_icon_round"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity"
-            android:configChanges="orientation|screenSize"/>
-        <activity android:name=".DeviceListActivity"
-            android:configChanges="orientation|screenSize"/>
+        android:theme="@style/AppTheme.NoActionBar">
+        <activity
+            android:name=".MainActivity"
+            android:configChanges="orientation|screenSize" />
+        <activity
+            android:name=".DeviceListActivity"
+            android:configChanges="orientation|screenSize" />
         <activity android:name=".SplashScreen">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -23,8 +25,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".WelcomeActivity"
-            android:configChanges="orientation|screenSize"/>
+        <activity
+            android:name=".WelcomeActivity"
+            android:configChanges="orientation|screenSize" />
+        <activity android:name=".HistoryView"></activity>
     </application>
 
 </manifest>

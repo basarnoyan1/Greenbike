@@ -1,10 +1,16 @@
 package io.evall.greenbike;
 
+import java.io.BufferedReader;
+import java.io.Console;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.UUID;
 import android.app.Activity;
@@ -17,6 +23,10 @@ import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.design.widget.Snackbar;
+import android.support.v7.widget.CardView;
+import android.util.Log;
+import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -24,7 +34,7 @@ public class MainActivity extends Activity {
     SharedPreferences sharedpref;
     TextView nametxt, sensorView2, sensorView3, sensorView4, sensorView5, sensorView6, sensorView7, sensorView8;
     Handler bluetoothIn;
-
+    CardView hist, save;
     final int handlerState = 0;
     private BluetoothAdapter btAdapter = null;
     private BluetoothSocket btSocket = null;
@@ -68,6 +78,8 @@ public class MainActivity extends Activity {
         sensorView6 = (TextView) findViewById(R.id.sensorView6);
         sensorView7 = (TextView) findViewById(R.id.sensorView7);
         sensorView8 = (TextView) findViewById(R.id.sensorView8);
+        hist = (CardView) findViewById(R.id.hisCard);
+        save = (CardView) findViewById(R.id.saveCard);
 
         bluetoothIn = new Handler() {
             public void handleMessage(android.os.Message msg) {
@@ -107,6 +119,48 @@ public class MainActivity extends Activity {
             }
         };
 
+        save.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                Calendar cal = Calendar.getInstance();
+                SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
+                String date = sdf.format(cal.getTime());
+                String dist = sensorView4.getText().toString();
+                String time = sensorView3.getText().toString();
+                String speed = sensorView5.getText().toString();
+                String power = sensorView6.getText().toString();
+                String pedal = sensorView2.getText().toString();
+                String tree = sensorView8.getText().toString();
+                String carbo = sensorView7.getText().toString();
+                String strText = date+"\t"+dist+"\t"+time+"\t"+
+                        speed+"\t"+power+"\t"+pedal+"\t"+tree+"\t"+carbo+"\n";
+                Log.w("Log",strText);
+                Snackbar snackbar = Snackbar
+                        .make(sensorView2, "Veriler kaydedildi!", Snackbar.LENGTH_SHORT);
+                try {
+                    FileOutputStream fos = openFileOutput("history.txt", getApplicationContext().MODE_APPEND);
+                    fos.write(strText.getBytes());
+                    fos.close();
+                    Log.w("Success","İşlem başarılı! (1)");
+                    snackbar.show();
+                } catch (IOException e) {
+                    try {
+                    FileOutputStream fos = openFileOutput("history.txt", getApplicationContext().MODE_PRIVATE);
+                    fos.write(strText.getBytes());
+                    fos.close();
+                    Log.w("Success","İşlem başarılı! (2)");
+                    snackbar.show();}
+                    catch (IOException e2) { }
+                }
+            }
+        });
+
+        hist.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                Intent i = new Intent(MainActivity.this, HistoryView.class);
+                startActivity(i);
+            }
+        });
+
         btAdapter = BluetoothAdapter.getDefaultAdapter();       // get Bluetooth adapter
         checkBTState();
     }
@@ -117,7 +171,6 @@ public class MainActivity extends Activity {
         return  device.createRfcommSocketToServiceRecord(BTMODULEUUID);
         //creates secure outgoing connecetion with BT device using UUID
     }
-
     @Override
     public void onResume() {
         super.onResume();
@@ -145,7 +198,6 @@ public class MainActivity extends Activity {
         mConnectedThread.start();
         mConnectedThread.write("x");
     }
-
     @Override
     public void onPause()
     {
@@ -157,7 +209,6 @@ public class MainActivity extends Activity {
             //insert code to deal with this
         }
     }
-
     private void checkBTState() {
 
         if(btAdapter==null) {
@@ -170,8 +221,6 @@ public class MainActivity extends Activity {
             }
         }
     }
-
-    //create new class for connect thread
     private class ConnectedThread extends Thread {
         private final InputStream mmInStream;
         private final OutputStream mmOutStream;
@@ -190,8 +239,6 @@ public class MainActivity extends Activity {
             mmInStream = tmpIn;
             mmOutStream = tmpOut;
         }
-
-
         public void run() {
             byte[] buffer = new byte[256];
             int bytes;
@@ -208,7 +255,6 @@ public class MainActivity extends Activity {
                 }
             }
         }
-        //write method
         public void write(String input) {
             byte[] msgBuffer = input.getBytes();           //converts entered String into bytes
             try {
