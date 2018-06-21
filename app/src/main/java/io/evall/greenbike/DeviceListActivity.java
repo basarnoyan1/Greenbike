@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.util.Log;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -23,7 +24,6 @@ import android.widget.AdapterView.OnItemClickListener;
 public class DeviceListActivity extends Activity {
     private static final String TAG = "DeviceListActivity";
     private static final boolean D = true;
-    Button tlbutton;
     ProgressBar prg;
     TextView textView1;
     View vie;
@@ -35,6 +35,7 @@ public class DeviceListActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.device_list);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         Boolean errormsg;
         if (savedInstanceState == null) {
             Bundle extras = getIntent().getExtras();
@@ -50,7 +51,7 @@ public class DeviceListActivity extends Activity {
         textView1 = (TextView) findViewById(R.id.connecting);
         prg = (ProgressBar) findViewById(R.id.progressBar);
         if(errormsg){
-            textView1.setText("Bağlantı hatası!");
+            textView1.setText(getString(R.string.bl_confail_key));
             vie.setVisibility(View.VISIBLE);
         }
     }
@@ -68,24 +69,25 @@ public class DeviceListActivity extends Activity {
         Set<BluetoothDevice> pairedDevices = mBtAdapter.getBondedDevices();
         if (pairedDevices.size() > 0) {
             for (BluetoothDevice device : pairedDevices) {
-                mPairedDevicesArrayAdapter.add(device.getName() + "\n" + device.getAddress());
+                if(device.getName().startsWith("GREENBIKE")) {
+                    mPairedDevicesArrayAdapter.add(device.getName() + "\n" + device.getAddress());
+                }
             }
         } else {
-            String noDevices = "Eşleştirilen Bluetooth cihazı bulunamadı.";
-            mPairedDevicesArrayAdapter.add(noDevices);
+            mPairedDevicesArrayAdapter.add(getString(R.string.bl_not_key));
         }
     }
 
     private OnItemClickListener mDeviceClickListener = new OnItemClickListener() {
         public void onItemClick(AdapterView<?> av, View v, int arg2, long arg3) {
                 String info = ((TextView) v).getText().toString();
-                if (info == "Eşleştirilen Bluetooth cihazı bulunamadı."){
+                if (info.equals(getString(R.string.bl_not_key))){
                     Snackbar mySnackbar = Snackbar.make(vie, info, Snackbar.LENGTH_SHORT);
                     mySnackbar.show();
                 }
                 else {
                     String address = info.substring(info.length() - 17);
-                    textView1.setText("Bağlanılıyor...");
+                    textView1.setText(getString(R.string.bl_con_key));
                     prg.setVisibility(View.VISIBLE);
                     vie.setVisibility(View.INVISIBLE);
                     Intent i = new Intent(DeviceListActivity.this, MainActivity.class);
@@ -99,7 +101,7 @@ public class DeviceListActivity extends Activity {
     private void checkBTState() {
         mBtAdapter=BluetoothAdapter.getDefaultAdapter();
         if(mBtAdapter==null) {
-            Toast.makeText(getBaseContext(), "Cihazınız Bluetooth desteklemiyor.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getBaseContext(), getString(R.string.bl_nosup_key), Toast.LENGTH_SHORT).show();
         } else {
             if (mBtAdapter.isEnabled()) {
                 Log.d(TAG, "Bluetooth açık!");

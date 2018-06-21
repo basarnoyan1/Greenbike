@@ -1,7 +1,27 @@
 <resources>
-    <string name="app_name">Greenbike</string>
-    <string name="title_activity_device_list">DeviceListActivity</string>
-    <string name="speech_prompt">Bir şeyler söyleyin&#8230;</string>
-    <string name="speech_not_supported">Üzgünüm! Cihazınız sesle yazımı desteklememektedir.</string>
-    <string name="tap_on_mic">Konuşmak için dokun</string>
+    <string name="app_name" translatable="false">Greenbike</string>
+    <string name="title_activity_device_list" translatable="false">DeviceListActivity</string>
+    <string name="yes_key">Evet</string>
+    <string name="no_key">Hayır</string>
+    <string name="meet_key">Sizi tanıyalım.</string>
+    <string name="age_key">Yaş</string>
+    <string name="name_key">İsim</string>
+    <string name="wei_key">Kütle</string>
+    <string name="hei_key">Boy</string>
+    <string name="gend_key">Cinsiyet</string>
+    <string name="male_key">Erkek</string>
+    <string name="female_key">Kadın</string>
+    <string name="hello_key">Merhaba</string>
+    <string name="tour_key">tur</string>
+    <string name="tree_key">ağaç</string>
+    <string name="autosave_key">Sürüşünüz otomatik olarak kaydedilecektir.</string>
+    <string name="saved_key">Veriler kaydedildi!</string>
+    <string name="exit_key">Çıkmak istediğine emin misin?</string>
+    <string name="bl_not_key">Eşleştirilen Bluetooth cihazı bulunamadı.</string>
+    <string name="bl_con_key">Bağlanılıyor...</string>
+    <string name="bl_nosup_key">Cihazınız Bluetooth desteklemiyor.</string>
+    <string name="bl_confail_key">Bağlantı hatası!</string>
+    <string name="hist_key">Geçmiş</string>
+    <string name="rank_key">Sıralama</string>
+    <string name="wlc_check_key">Bilgilerinizi lütfen kontrol ediniz.</string>
 </resources>
