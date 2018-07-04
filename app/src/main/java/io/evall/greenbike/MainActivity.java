@@ -123,7 +123,7 @@ public class MainActivity extends Activity {
                 int s= (int)(time - h*3600000- m*60000)/1000 ;
                 String t = (h < 10 ? "0"+h: h)+":"+(m < 10 ? "0"+m: m)+":"+ (s < 10 ? "0"+s: s);
                 chronometer.setText(t);
-                if((SystemClock.elapsedRealtime() - sensorView3.getBase() - lasttime)>20000){
+                if((SystemClock.elapsedRealtime() - sensorView3.getBase() - lasttime)>10000){
                     Snackbar snackbar = Snackbar
                             .make(sensorView3, getString(R.string.autosave_key), Snackbar.LENGTH_LONG);
                     snackbar.show();
@@ -136,7 +136,26 @@ public class MainActivity extends Activity {
                     mConnectedThread.start();
                     mConnectedThread.write("x");}
                     catch (IOException e) { }
-            }}
+            }
+
+                    /*************************/
+                    if(dist != null || dist != "0 km") {
+                        long chrtime = SystemClock.elapsedRealtime() - sensorView3.getBase();
+                        BigDecimal co = new BigDecimal(chrtime / 1000 * 0.125);
+                        co = co.setScale(2, BigDecimal.ROUND_DOWN);
+                        sensorView7.setText(co + " g CO2");
+                        BigDecimal tr = new BigDecimal(chrtime * 6.25 / 100000);
+                        tr = tr.divide(new BigDecimal(1000));
+                        tr = tr.setScale(2, BigDecimal.ROUND_DOWN);
+                        sensorView8.setText(tr + " ağaç");
+                        sensorView5.setText(String.format("%.1f", 3600 * peri / (chrtime - lasttime)) + " km/h");
+                        double sped = Double.parseDouble(String.format("%.1f", 3600 * peri / (chrtime - lasttime)));
+                        sensorView6.setText(getCal(gen, hei, wei, age, sped));
+                        lasttime = chrtime;
+                    }
+                    /**************************/
+
+            }
         });
 
         sensorView4 = (TextView) findViewById(R.id.sensorView4);
@@ -177,9 +196,19 @@ public class MainActivity extends Activity {
                         }
                         sensorView2.setText(Integer.toString(value - frnum) + " tur");
                         sensorView4.setText(String.format("%.3f", ((value - frnum) * peri / 1000)) + " km");
-                        sensorView7.setText(String.format("%.2f", ((value - frnum) * peri / 1000) * 137) + " g CO2");
-                        sensorView8.setText(String.format("%.2f", ((value - frnum) * peri / 1000) * 5) + " ağaç");
                         long chrtime = SystemClock.elapsedRealtime() - sensorView3.getBase();
+
+                        //sensorView7.setText(String.format("%.2f", ((value - frnum) * peri / 1000) * 137) + " g CO2");
+                        BigDecimal co = new BigDecimal(chrtime/1000 * 0.125);
+                        co = co.setScale(2, BigDecimal.ROUND_DOWN);
+                        sensorView7.setText(co + " g CO2");
+
+                        //sensorView8.setText(String.format("%.2f", ((value - frnum) * peri / 1000) * 5) + " ağaç");
+                        BigDecimal tr = new BigDecimal(chrtime*6.25/100000);
+                        tr = tr.divide(new BigDecimal(1000));
+                        tr = tr.setScale(2, BigDecimal.ROUND_DOWN);
+                        sensorView8.setText(tr + " ağaç");
+
                         sensorView5.setText(String.format("%.1f", 3600 * peri/(chrtime-lasttime)) + " km/h");
                         double sped =  Double.parseDouble(String.format("%.1f", 3600 * peri/(chrtime-lasttime)));
                         sensorView6.setText(getCal(gen, hei, wei, age, sped));

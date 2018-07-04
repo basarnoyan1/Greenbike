@@ -27,9 +27,10 @@
         android:text="Merhaba, Başar!"
         android:textAppearance="@android:style/TextAppearance.Material"
         android:textColor="@color/colorPrimary"
-        android:textSize="16sp"
+        android:textSize="14sp"
         android:textStyle="bold"
-        app:fontFamily="sans-serif-condensed"
+        app:fontFamily="sans-serif"
+        android:typeface="sans"
         app:layout_constraintBottom_toBottomOf="@+id/view11"
         app:layout_constraintStart_toStartOf="parent" />
 
@@ -65,6 +66,7 @@
                 android:text="0 km"
                 android:textSize="22sp"
                 android:textStyle="bold"
+                app:fontFamily="sans-serif"
                 app:layout_constraintBottom_toTopOf="@+id/line"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -163,6 +165,7 @@
                 android:text="0 tur"
                 android:textSize="22sp"
                 android:textStyle="bold"
+                app:fontFamily="sans-serif"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -211,6 +214,7 @@
                 android:text="0 km/h"
                 android:textSize="20sp"
                 android:textStyle="bold"
+                app:fontFamily="sans-serif"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -259,6 +263,7 @@
                 android:text="0 ağaç"
                 android:textSize="18sp"
                 android:textStyle="bold"
+                app:fontFamily="sans-serif"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -297,6 +302,7 @@
                 android:text="0 cal"
                 android:textSize="20sp"
                 android:textStyle="bold"
+                app:fontFamily="sans-serif"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -361,6 +367,7 @@
                 android:text="0 g CO2"
                 android:textSize="18sp"
                 android:textStyle="bold"
+                app:fontFamily="sans-serif"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
