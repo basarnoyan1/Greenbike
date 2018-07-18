@@ -15,8 +15,10 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -243,6 +245,23 @@ public class MainActivity extends Activity {
                 sensorView7.setText("0 g CO2");
                 sensorView8.setText("0 "+getString(R.string.tree_key));
 
+                //
+                long chrtime = SystemClock.elapsedRealtime() - sensorView3.getBase();
+                AlertDialog alertDialog = new AlertDialog.Builder(
+                        MainActivity.this).create();
+                alertDialog.setTitle("Ürettiğin elektrik enerjisiyle:");
+                alertDialog.setMessage(
+                        appr_time(chrtime,0)+"kettle,\n"+
+                        appr_time(chrtime,1)+"ampul,\n"+
+                        appr_time(chrtime,2)+"klima çalıştırabilir ve\n"+
+                        appr_time(chrtime,3)+"basınçlı hava üretebilirdin."
+                );
+                alertDialog.setButton("Tamam", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                    }
+                });
+                alertDialog.show();
+                //
 
                 String strText = date + "\t" + dist + "\t" + time + "\t" +
                         speed + "\t" + energy + "\t" + pedal + "\t" + tree + "\t" + carbo + "\n";
@@ -472,6 +491,48 @@ public class MainActivity extends Activity {
         res = res.setScale(1, BigDecimal.ROUND_DOWN);
         return res.toString()+ " cal";
     }
+
+
+    ///
+    public String appr_time (long tim, int code){
+        String res = null;
+        switch (code){
+            case 0://Kettle
+                BigDecimal t = new BigDecimal(tim);
+                t = t.divide(new BigDecimal(21600000));
+                t = t.setScale(2, BigDecimal.ROUND_DOWN);
+                res = t.toString() + " kez ";
+                break;
+
+            case 1://Ampul
+                long millis = tim *60 /16;
+                res = String.format("%02d:%02d:%02d",
+                        TimeUnit.MILLISECONDS.toHours(millis),
+                        TimeUnit.MILLISECONDS.toMinutes(millis) -
+                                TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(millis)),
+                        TimeUnit.MILLISECONDS.toSeconds(millis) -
+                                TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millis))) + " ";
+                break;
+
+            case 2://Klima
+                long milli = tim *10 /35;
+                res = String.format("%02d:%02d:%02d",
+                        TimeUnit.MILLISECONDS.toHours(milli),
+                        TimeUnit.MILLISECONDS.toMinutes(milli) -
+                                TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(milli)),
+                        TimeUnit.MILLISECONDS.toSeconds(milli) -
+                                TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(milli))) + " ";
+                break;
+
+            case 3://Basınçlı hava
+                long mill = tim / 540;
+                res = mill/1000 + "s ";
+                break;
+        }
+
+        return res;
+    }
+    ///
 
 }
 
