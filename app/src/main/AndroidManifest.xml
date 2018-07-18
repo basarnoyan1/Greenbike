@@ -32,6 +32,9 @@
             android:configChanges="orientation|screenSize" />
         <activity android:name=".HistoryView" />
         <activity android:name=".RanklistActivity"></activity>
+        <meta-data
+            android:name="io.fabric.ApiKey"
+            android:value="34897caf6b8b3c29f9e337955a7eb33db14d12c6" />
     </application>
 
 </manifest>

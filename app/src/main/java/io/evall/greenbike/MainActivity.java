@@ -246,21 +246,27 @@ public class MainActivity extends Activity {
                 sensorView8.setText("0 "+getString(R.string.tree_key));
 
                 //
-                long chrtime = SystemClock.elapsedRealtime() - sensorView3.getBase();
-                AlertDialog alertDialog = new AlertDialog.Builder(
-                        MainActivity.this).create();
-                alertDialog.setTitle("Ürettiğin elektrik enerjisiyle:");
-                alertDialog.setMessage(
-                        appr_time(chrtime,0)+"kettle,\n"+
-                        appr_time(chrtime,1)+"ampul,\n"+
-                        appr_time(chrtime,2)+"klima çalıştırabilir ve\n"+
-                        appr_time(chrtime,3)+"basınçlı hava üretebilirdin."
-                );
-                alertDialog.setButton("Tamam", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                    }
-                });
-                alertDialog.show();
+                try {
+                    long chrtime = SystemClock.elapsedRealtime() - sensorView3.getBase();
+                    AlertDialog alertDialog = new AlertDialog.Builder(
+                            MainActivity.this).create();
+                    alertDialog.setTitle("Ürettiğin elektrik enerjisiyle:");
+                    alertDialog.setMessage(
+                            appr_time(chrtime, 0) + "kettle,\n" +
+                                    appr_time(chrtime, 1) + "ampul,\n" +
+                                    appr_time(chrtime, 2) + "klima çalıştırabilir ve\n" +
+                                    appr_time(chrtime, 3) + "basınçlı hava üretebilirdin."
+                    );
+                    alertDialog.setButton("Tamam", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                        }
+                    });
+                    alertDialog.show();
+                }
+                catch (Exception e){
+                    Log.e("Error",e.getMessage());
+                }
+
                 //
 
                 String strText = date + "\t" + dist + "\t" + time + "\t" +
