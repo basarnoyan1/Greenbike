@@ -32,6 +32,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -83,6 +84,7 @@ public class HistoryView extends AppCompatActivity {
                     datanum.put("H", rs[4]);//gas
                     prolist.add(datanum);
                 }
+                Collections.reverse(prolist);
             }
             catch (NullPointerException ex){}
         } catch(IOException ioe){

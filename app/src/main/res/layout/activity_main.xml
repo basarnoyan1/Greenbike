@@ -403,7 +403,7 @@
         android:layout_marginTop="8dp"
         android:foreground="@mipmap/save"
         android:foregroundGravity="center_vertical|center_horizontal"
-        app:cardBackgroundColor="@color/save_color"
+        app:cardBackgroundColor="@color/backColor"
         app:cardCornerRadius="25px"
         app:layout_constraintBottom_toBottomOf="@+id/cardView14"
         app:layout_constraintEnd_toEndOf="parent"
@@ -425,5 +425,17 @@
         app:cardCornerRadius="25px"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@+id/cardView11" />
+
+    <View
+        android:id="@+id/view4"
+        android:layout_width="72dp"
+        android:layout_height="72dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="16dp"
+        android:alpha="0.3"
+        android:foreground="@mipmap/bike_icon_round"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 </android.support.constraint.ConstraintLayout>

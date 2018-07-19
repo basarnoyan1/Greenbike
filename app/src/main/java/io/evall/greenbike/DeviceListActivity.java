@@ -139,9 +139,9 @@ public class DeviceListActivity extends Activity {
             String action = intent.getAction();
             if (BluetoothDevice.ACTION_FOUND.equals(action)) {
                 BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-                //if(device.getName().startsWith("GREENBIKE")) {
-                mPairedDevicesArrayAdapter.add(device.getName() + "\n" + device.getAddress());
-                //}
+                if(device.getName().startsWith("GREENBIKE")) {
+                    mPairedDevicesArrayAdapter.add(device.getName() + "\n" + device.getAddress());
+                }
             }
         }
     };
