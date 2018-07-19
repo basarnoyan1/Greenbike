@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/GreenBike.iml" filepath="$PROJECT_DIR$/GreenBike.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Greenbike.iml" filepath="$PROJECT_DIR$/Greenbike.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
     </modules>
   </component>

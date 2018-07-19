@@ -17,11 +17,13 @@
     <string name="autosave_key">Sürüşünüz otomatik olarak kaydedilecektir.</string>
     <string name="saved_key">Veriler kaydedildi!</string>
     <string name="exit_key">Çıkmak istediğine emin misin?</string>
-    <string name="bl_not_key">Eşleştirilen Bluetooth cihazı bulunamadı.</string>
+    <string name="bl_not_key">Eşleştirilen herhangi bir cihaz bulunamadı.</string>
     <string name="bl_con_key">Bağlanılıyor...</string>
     <string name="bl_nosup_key">Cihazınız Bluetooth desteklemiyor.</string>
     <string name="bl_confail_key">Bağlantı hatası!</string>
     <string name="hist_key">Geçmiş</string>
     <string name="rank_key">Sıralama</string>
     <string name="wlc_check_key">Bilgilerinizi lütfen kontrol ediniz.</string>
+    <string name="scan_key">Cihazlar taranıyor...</string>
+    <string name="bl_sc_not_key">Yakınınızda herhangi bir cihaz bulunamadı.</string>
 </resources>

@@ -1,5 +1,6 @@
 package io.evall.greenbike;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ActivityNotFoundException;
@@ -7,12 +8,15 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.speech.RecognizerIntent;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
@@ -54,6 +58,22 @@ public class WelcomeActivity extends Activity {
         age = (EditText) findViewById(R.id.editAge);
         hei = (EditText) findViewById(R.id.editHeight);
         wei = (EditText) findViewById(R.id.editMass);
+
+        if(Integer.valueOf(android.os.Build.VERSION.SDK)>22) {
+            if (ContextCompat.checkSelfPermission(WelcomeActivity.this,
+                    android.Manifest.permission.ACCESS_COARSE_LOCATION)
+                    != PackageManager.PERMISSION_GRANTED) {
+
+                if (ActivityCompat.shouldShowRequestPermissionRationale(WelcomeActivity.this,
+                        android.Manifest.permission.ACCESS_COARSE_LOCATION)) {
+                } else {
+                    ActivityCompat.requestPermissions(WelcomeActivity.this,
+                            new String[]{Manifest.permission.ACCESS_COARSE_LOCATION},
+                            210);
+                }
+            } else { }
+        }
+
 
         if(!isOnline()){
             AlertDialog alertDialog = new AlertDialog.Builder(
@@ -157,5 +177,17 @@ public class WelcomeActivity extends Activity {
         NetworkInfo netInfo = cm.getActiveNetworkInfo();
         return netInfo != null && netInfo.isConnectedOrConnecting();
     }
-
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case 210: {
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                } else {
+                }
+                return;
+            }
+        }
+    }
 }

@@ -1,13 +1,21 @@
 package io.evall.greenbike;
 
 import java.util.Set;
+
+import android.Manifest;
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
+import android.support.v4.content.ContextCompat;
+import android.support.v4.content.PermissionChecker;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
@@ -36,7 +44,9 @@ public class DeviceListActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.device_list);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-        Boolean errormsg;
+        IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
+        registerReceiver(mReceiver, filter);
+        Boolean errormsg = false;
         if (savedInstanceState == null) {
             Bundle extras = getIntent().getExtras();
             if(extras == null) {
@@ -66,35 +76,46 @@ public class DeviceListActivity extends Activity {
         pairedListView.setAdapter(mPairedDevicesArrayAdapter);
         pairedListView.setOnItemClickListener(mDeviceClickListener);
         mBtAdapter = BluetoothAdapter.getDefaultAdapter();
-        Set<BluetoothDevice> pairedDevices = mBtAdapter.getBondedDevices();
-        if (pairedDevices.size() > 0) {
-            for (BluetoothDevice device : pairedDevices) {
-                if(device.getName().startsWith("GREENBIKE")) {
-                    mPairedDevicesArrayAdapter.add(device.getName() + "\n" + device.getAddress());
+
+        Boolean loc = PermissionChecker.checkSelfPermission(DeviceListActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED;
+
+        if(!loc) {
+            Set<BluetoothDevice> pairedDevices = mBtAdapter.getBondedDevices();
+            if (pairedDevices.size() > 0) {
+                for (BluetoothDevice device : pairedDevices) {
+                    if (device.getName().startsWith("GREENBIKE")) {
+                        mPairedDevicesArrayAdapter.add(device.getName() + "\n" + device.getAddress());
+                    }
                 }
             }
-        } else {
-            mPairedDevicesArrayAdapter.add(getString(R.string.bl_not_key));
+        }
+
+        if(loc) {
+            mBtAdapter.startDiscovery();
+            textView1.setText(getString(R.string.scan_key));
+        }
+
+        if(!loc) {
+            if (mPairedDevicesArrayAdapter.isEmpty()) {
+                textView1.setText(getString(R.string.bl_not_key));
+            }
         }
     }
 
     private OnItemClickListener mDeviceClickListener = new OnItemClickListener() {
         public void onItemClick(AdapterView<?> av, View v, int arg2, long arg3) {
-                String info = ((TextView) v).getText().toString();
-                if (info.equals(getString(R.string.bl_not_key))){
-                    Snackbar mySnackbar = Snackbar.make(vie, info, Snackbar.LENGTH_SHORT);
-                    mySnackbar.show();
-                }
-                else {
-                    String address = info.substring(info.length() - 17);
-                    textView1.setText(getString(R.string.bl_con_key));
-                    prg.setVisibility(View.VISIBLE);
-                    vie.setVisibility(View.INVISIBLE);
-                    Intent i = new Intent(DeviceListActivity.this, MainActivity.class);
-                    i.putExtra(EXTRA_DEVICE_ADDRESS, address);
-                    startActivity(i);
-                    finish();
-                }
+            String info = ((TextView) v).getText().toString();
+            String address = info.substring(info.length() - 17);
+            if (mBtAdapter.isDiscovering()) {
+                mBtAdapter.cancelDiscovery();
+            }
+            textView1.setText(getString(R.string.bl_con_key));
+            prg.setVisibility(View.VISIBLE);
+            vie.setVisibility(View.INVISIBLE);
+            Intent i = new Intent(DeviceListActivity.this, MainActivity.class);
+            i.putExtra(EXTRA_DEVICE_ADDRESS, address);
+            startActivity(i);
+            finish();
         }
     };
 
@@ -112,5 +133,19 @@ public class DeviceListActivity extends Activity {
             }
         }
     }
+
+    private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
+        public void onReceive(Context context, Intent intent) {
+            String action = intent.getAction();
+            if (BluetoothDevice.ACTION_FOUND.equals(action)) {
+                BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+                //if(device.getName().startsWith("GREENBIKE")) {
+                mPairedDevicesArrayAdapter.add(device.getName() + "\n" + device.getAddress());
+                //}
+            }
+        }
+    };
+
+
 
 }
