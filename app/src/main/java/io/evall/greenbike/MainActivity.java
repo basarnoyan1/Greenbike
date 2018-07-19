@@ -125,7 +125,7 @@ public class MainActivity extends Activity {
                 int s= (int)(time - h*3600000- m*60000)/1000 ;
                 String t = (h < 10 ? "0"+h: h)+":"+(m < 10 ? "0"+m: m)+":"+ (s < 10 ? "0"+s: s);
                 chronometer.setText(t);
-                if((SystemClock.elapsedRealtime() - sensorView3.getBase() - lasttime)>10000){
+                if((time - lasttime)>5000){
                     Snackbar snackbar = Snackbar
                             .make(sensorView3, getString(R.string.autosave_key), Snackbar.LENGTH_LONG);
                     snackbar.show();
@@ -140,7 +140,7 @@ public class MainActivity extends Activity {
                     catch (IOException e) { }
             }
 
-                    /*************************/
+                    /*************************
                     if(dist != null || dist != "0 km") {
                         long chrtime = SystemClock.elapsedRealtime() - sensorView3.getBase();
                         BigDecimal co = new BigDecimal(chrtime / 1000 * 0.125);
@@ -153,9 +153,9 @@ public class MainActivity extends Activity {
                         sensorView5.setText(String.format("%.1f", 3600 * peri / (chrtime - lasttime)) + " km/h");
                         double sped = Double.parseDouble(String.format("%.1f", 3600 * peri / (chrtime - lasttime)));
                         sensorView6.setText(getCal(gen, hei, wei, age, sped));
-                        lasttime = chrtime;
+                        //lasttime = chrtime;
                     }
-                    /**************************/
+                     **************************/
 
             }
         });
@@ -234,17 +234,6 @@ public class MainActivity extends Activity {
                 tree = sensorView8.getText().toString();
                 carbo = sensorView7.getText().toString();
 
-                first = !first;
-                sensorView3.stop();
-                sensorView3.setBase(SystemClock.elapsedRealtime());
-                sensorView3.setText("00:00:00");
-                sensorView2.setText("0 "+getString(R.string.tour_key));
-                sensorView4.setText("0 km");
-                sensorView5.setText("0 km/h");
-                sensorView6.setText("0 cal");
-                sensorView7.setText("0 g CO2");
-                sensorView8.setText("0 "+getString(R.string.tree_key));
-
                 //
                 try {
                     long chrtime = SystemClock.elapsedRealtime() - sensorView3.getBase();
@@ -252,8 +241,8 @@ public class MainActivity extends Activity {
                             MainActivity.this).create();
                     alertDialog.setTitle("Ürettiğin elektrik enerjisiyle:");
                     alertDialog.setMessage(
-                            appr_time(chrtime, 0) + "kettle,\n" +
-                                    appr_time(chrtime, 1) + "ampul,\n" +
+                            appr_time(chrtime, 0) + "su ısıtıcısı,\n" +
+                            appr_time(chrtime, 1) + "ampul,\n" +
                                     appr_time(chrtime, 2) + "klima çalıştırabilir ve\n" +
                                     appr_time(chrtime, 3) + "basınçlı hava üretebilirdin."
                     );
@@ -269,8 +258,28 @@ public class MainActivity extends Activity {
 
                 //
 
+                first = !first;
+                sensorView3.stop();
+                sensorView3.setBase(SystemClock.elapsedRealtime());
+                sensorView3.setText("00:00:00");
+                sensorView2.setText("0 "+getString(R.string.tour_key));
+                sensorView4.setText("0 km");
+                sensorView5.setText("0 km/h");
+                sensorView6.setText("0 cal");
+                sensorView7.setText("0 g CO2");
+                sensorView8.setText("0 "+getString(R.string.tree_key));
+
                 String strText = date + "\t" + dist + "\t" + time + "\t" +
                         speed + "\t" + energy + "\t" + pedal + "\t" + tree + "\t" + carbo + "\n";
+
+                dist = "0 km";
+                time = "00:00:00";
+                speed = "0 km/h";
+                energy = "0 cal";
+                pedal = "0 tur";
+                tree = "0 ağaç";
+                carbo = "0 g CO2";
+
                 Log.w("Log", strText);
                 Snackbar snackbar = Snackbar
                         .make(sensorView2, getString(R.string.saved_key), Snackbar.LENGTH_SHORT);
@@ -377,7 +386,7 @@ public class MainActivity extends Activity {
     @Override
     public void onPause() {
         super.onPause();
-        if(dist != null || dist != "0 km"){
+        if(dist != null && dist != "0 km"){
             save.callOnClick();}
     }
 
@@ -503,11 +512,16 @@ public class MainActivity extends Activity {
     public String appr_time (long tim, int code){
         String res = null;
         switch (code){
-            case 0://Kettle
-                BigDecimal t = new BigDecimal(tim);
-                t = t.divide(new BigDecimal(21600000));
-                t = t.setScale(2, BigDecimal.ROUND_DOWN);
-                res = t.toString() + " kez ";
+            case 0://Su ısıtıcısı
+                try{
+                    BigDecimal t = new BigDecimal(tim);
+                    t = t.divide(new BigDecimal(21600));
+                    t = t.divide(new BigDecimal(1000));
+                    t = t.setScale(2, BigDecimal.ROUND_DOWN);
+                    res = t.toString() + " kez ";
+                }catch (Exception e){
+                    res = "0 kez ";
+                }
                 break;
 
             case 1://Ampul
@@ -532,7 +546,7 @@ public class MainActivity extends Activity {
 
             case 3://Basınçlı hava
                 long mill = tim / 540;
-                res = mill/1000 + "s ";
+                res = mill/1000 + " s ";
                 break;
         }
 
