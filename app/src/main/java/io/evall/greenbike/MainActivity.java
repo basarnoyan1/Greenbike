@@ -137,8 +137,8 @@ public class MainActivity extends Activity {
                         tr = tr.divide(new BigDecimal(1000));
                         tr = tr.setScale(2, BigDecimal.ROUND_DOWN);
                         sensorView8.setText(tr + " ağaç");
-                        sensorView5.setText(String.format("%.1f", 3600 * peri / (chrtime - lasttime)) + " km/h");
-                        double sped = Double.parseDouble(String.format("%.1f", 3600 * peri / (chrtime - lasttime)));
+                        sensorView5.setText(String.format(Locale.US,"%.1f", 3600 * peri / (chrtime - lasttime)) + " km/h");
+                        double sped = Double.parseDouble(String.format(Locale.US,"%.1f", 3600 * peri / (chrtime - lasttime)));
                         sensorView6.setText(getCal(gen, hei, wei, age, sped));
                         //lasttime = chrtime;
                     }
@@ -183,21 +183,22 @@ public class MainActivity extends Activity {
                             sensorView3.setText("00:00:00");
                             sensorView3.start();
                         }
+
                         sensorView2.setText(Integer.toString(value - frnum) + " tur");
-                        sensorView4.setText(String.format("%.3f", ((value - frnum) * peri / 1000)) + " km");
+                        sensorView4.setText(String.format(Locale.US,"%.3f", ((value - frnum) * peri / 1000)) + " km");
                         long chrtime = SystemClock.elapsedRealtime() - sensorView3.getBase();
 
                         BigDecimal co = new BigDecimal(chrtime/1000 * 0.125);
                         co = co.setScale(2, BigDecimal.ROUND_DOWN);
-                        sensorView7.setText(co + " g CO2");
+                        sensorView7.setText(co.toString().replace("," ,".") + " g CO2");
 
                         BigDecimal tr = new BigDecimal(chrtime*6.25/100000);
                         tr = tr.divide(new BigDecimal(1000));
                         tr = tr.setScale(2, BigDecimal.ROUND_DOWN);
-                        sensorView8.setText(tr + " ağaç");
+                        sensorView8.setText(tr.toString().replace("," ,".") + " ağaç");
 
-                        sensorView5.setText(String.format("%.1f", 3600 * peri/(chrtime-lasttime)) + " km/h");
-                        double sped =  Double.parseDouble(String.format("%.1f", 3600 * peri/(chrtime-lasttime)));
+                        sensorView5.setText(String.format(Locale.US,"%.1f", 3600 * peri/(chrtime-lasttime)) + " km/h");
+                        double sped =  Double.parseDouble(String.format(Locale.US,"%.1f", 3600 * peri/(chrtime-lasttime)));
                         sensorView6.setText(getCal(gen, hei, wei, age, sped));
                         lasttime = chrtime;
                         dataInPrint = " ";
@@ -483,7 +484,7 @@ public class MainActivity extends Activity {
         BigDecimal res  = tim.multiply(bd1);
         res = res.divide(new BigDecimal(1000));
         res = res.setScale(1, BigDecimal.ROUND_DOWN);
-        return res.toString()+ " cal";
+        return res.toString().replace("," ,".") + " cal";
     }
 
 
@@ -497,7 +498,7 @@ public class MainActivity extends Activity {
                     t = t.divide(new BigDecimal(21600));
                     t = t.divide(new BigDecimal(1000));
                     t = t.setScale(2, BigDecimal.ROUND_DOWN);
-                    res = t.toString() + " kez ";
+                    res = t.toString().replace("," ,".") + " kez ";
                 }catch (Exception e){
                     res = "0 kez ";
                 }
