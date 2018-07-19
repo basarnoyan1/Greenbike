@@ -1,5 +1,7 @@
 package io.evall.greenbike;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -32,9 +34,11 @@ import java.util.List;
 import java.util.Map;
 
 public class RanklistActivity extends AppCompatActivity {
+    SharedPreferences sharedpref;
     List<Userdata> dataList = new ArrayList<>();
     RecyclerView recyclerView;
     UserdataAdapter mAdapter;
+    String salt;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,6 +58,8 @@ public class RanklistActivity extends AppCompatActivity {
             }
         });
 
+        sharedpref = getSharedPreferences("appData", Context.MODE_PRIVATE);
+        salt = sharedpref.getString("salt", null);
         recyclerView = (RecyclerView) findViewById(R.id.rank_list);
         mAdapter = new UserdataAdapter(dataList);
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
@@ -64,7 +70,7 @@ public class RanklistActivity extends AppCompatActivity {
 
         ///
         RequestQueue queue = Volley.newRequestQueue(this);
-        String url = "http://greenbike.evall.io/api.php?actionid=200";
+        String url = "http://greenbike.evall.io/api.php?actionid=200&salt="+salt;
         JsonObjectRequest getRequest = new JsonObjectRequest(Request.Method.GET, url, null,
                 new Response.Listener<JSONObject>()
                 {
