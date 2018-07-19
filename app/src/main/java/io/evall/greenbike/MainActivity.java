@@ -127,7 +127,7 @@ public class MainActivity extends Activity {
                     catch (IOException e) { }
             }
 
-                    /*************************/
+                    /*************************
                     if(dist != null || dist != "0 km") {
                         long chrtime = SystemClock.elapsedRealtime() - sensorView3.getBase();
                         BigDecimal co = new BigDecimal(chrtime / 1000 * 0.125);
@@ -140,9 +140,9 @@ public class MainActivity extends Activity {
                         sensorView5.setText(String.format("%.1f", 3600 * peri / (chrtime - lasttime)) + " km/h");
                         double sped = Double.parseDouble(String.format("%.1f", 3600 * peri / (chrtime - lasttime)));
                         sensorView6.setText(getCal(gen, hei, wei, age, sped));
-                        lasttime = chrtime;
+                        //lasttime = chrtime;
                     }
-                    /**************************/
+                     **************************/
 
             }
         });
@@ -226,7 +226,7 @@ public class MainActivity extends Activity {
                             MainActivity.this).create();
                     alertDialog.setTitle("Ürettiğin elektrik enerjisiyle:");
                     alertDialog.setMessage(
-                            appr_time(chrtime, 0) + "su ısıtıcısı,\n" +
+                                    appr_time(chrtime, 0) + "su ısıtıcısı,\n" +
                                     appr_time(chrtime, 1) + "ampul,\n" +
                                     appr_time(chrtime, 2) + "klima çalıştırabilir ve\n" +
                                     appr_time(chrtime, 3) + "basınçlı hava üretebilirdin."
@@ -369,7 +369,7 @@ public class MainActivity extends Activity {
     @Override
     public void onPause() {
         super.onPause();
-        if(dist != null || dist != "0 km"){
+        if(dist != null && dist != "0 km"){
             save.callOnClick();}
     }
     @Override
