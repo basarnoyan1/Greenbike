@@ -1,6 +1,7 @@
 package io.evall.greenbike;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -117,4 +118,13 @@ public class RanklistActivity extends AppCompatActivity {
         ///
 
     }
+
+    /*@Override
+    protected void onPause()
+    {
+        super.onPause();
+        Intent i = new Intent(RanklistActivity.this, MainActivity.class);
+        i.putExtra("device_address", getIntent().getStringExtra("device_address"));
+        startActivity(i);
+    }*/
 }

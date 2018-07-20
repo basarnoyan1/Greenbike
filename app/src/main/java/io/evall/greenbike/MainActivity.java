@@ -306,7 +306,7 @@ public class MainActivity extends Activity {
                 Intent i = new Intent(MainActivity.this, HistoryView.class);
                 i.putExtra("device_address", address);
                 startActivity(i);
-                finish();
+               // finish();
             }
         });
 
@@ -316,7 +316,7 @@ public class MainActivity extends Activity {
                 Intent i = new Intent(MainActivity.this, RanklistActivity.class);
                 i.putExtra("device_address", address);
                 startActivity(i);
-                finish();
+                //finish();
                 }
                 else{
                     Snackbar snackbar = Snackbar

@@ -6,29 +6,16 @@
     android:layout_height="wrap_content">
 
     <TextView
-        android:id="@+id/txtr_date"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="16dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:text="05.06.2018"
-        android:textSize="12sp"
-        android:textStyle="bold"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
         android:id="@+id/txtr_time"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="16dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="5dp"
+        android:layout_marginLeft="100dp"
+        android:layout_marginStart="100dp"
+        android:layout_marginTop="8dp"
         android:text="00:01:45"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/txtr_date" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/txtr_dist"
@@ -36,11 +23,11 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="24dp"
         android:layout_marginStart="24dp"
-        android:layout_marginTop="5dp"
+        android:layout_marginTop="8dp"
         android:text="10 km"
         android:textStyle="bold"
         app:layout_constraintStart_toEndOf="@+id/txtr_time"
-        app:layout_constraintTop_toBottomOf="@+id/txtr_date" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/txtr_co2"
@@ -48,7 +35,7 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="24dp"
         android:layout_marginStart="24dp"
-        android:layout_marginTop="5dp"
+        android:layout_marginTop="8dp"
         android:text="2 g CO2"
         app:layout_constraintStart_toEndOf="@+id/txtr_tree"
         app:layout_constraintTop_toBottomOf="@+id/txtr_speed" />
@@ -59,11 +46,11 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="24dp"
         android:layout_marginStart="24dp"
-        android:layout_marginTop="5dp"
+        android:layout_marginTop="8dp"
         android:text="25 km/h"
         android:textStyle="bold"
         app:layout_constraintStart_toEndOf="@+id/txtr_dist"
-        app:layout_constraintTop_toBottomOf="@+id/txtr_date" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/txtr_tree"
@@ -71,7 +58,7 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="24dp"
         android:layout_marginStart="24dp"
-        android:layout_marginTop="5dp"
+        android:layout_marginTop="8dp"
         android:text="1 ağaç"
         app:layout_constraintStart_toEndOf="@+id/txtr_rev"
         app:layout_constraintTop_toBottomOf="@+id/txtr_speed" />
@@ -82,7 +69,7 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="24dp"
         android:layout_marginStart="24dp"
-        android:layout_marginTop="5dp"
+        android:layout_marginTop="8dp"
         android:text="134 tur"
         app:layout_constraintStart_toEndOf="@+id/txtr_energy"
         app:layout_constraintTop_toBottomOf="@+id/txtr_dist" />
@@ -92,9 +79,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="5dp"
+        android:layout_marginLeft="100dp"
+        android:layout_marginStart="100dp"
+        android:layout_marginTop="8dp"
         android:text="13 cal"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -104,12 +91,12 @@
         android:id="@+id/txtr_user"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="20dp"
         android:text="Username"
         android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
 </android.support.constraint.ConstraintLayout>
