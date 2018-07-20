@@ -240,13 +240,6 @@ public class MainActivity extends Activity {
                 String strText = date + "\t" + dist + "\t" + time + "\t" +
                         speed + "\t" + energy + "\t" + pedal + "\t" + tree + "\t" + carbo + "\n";
 
-                dist = "0 km";
-                time = "00:00:00";
-                speed = "0 km/h";
-                energy = "0 cal";
-                pedal = "0 tur";
-                tree = "0 ağaç";
-                carbo = "0 g CO2";
 
                 Log.w("Log", strText);
                 Snackbar snackbar = Snackbar
@@ -295,7 +288,16 @@ public class MainActivity extends Activity {
                             return params;
                         }
                     };
-                    queue.add(putRequest);}catch(Exception e){}}
+                    queue.add(putRequest);
+
+                    /*dist = "0 km";
+                    time = "00:00:00";
+                    speed = "0 km/h";
+                    energy = "0 cal";
+                    pedal = "0 tur";
+                    tree = "0 ağaç";
+                    carbo = "0 g CO2";*/
+                }catch(Exception e){}}
                 /////////////////////////////////
 
             }
