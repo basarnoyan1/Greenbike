@@ -84,7 +84,6 @@ public class RanklistActivity extends AppCompatActivity {
                             JSONObject data = userdata.getJSONObject(i);
 
                             String name = data.getString("username");
-                            String cycledate = data.getString("cycledate");
                             String dist = data.getString("dist")+" km";
 
                             String cycletime = data.getString("cycletime");
@@ -96,7 +95,7 @@ public class RanklistActivity extends AppCompatActivity {
                             String gas = data.getString("gas")+" g CO2";
 
                             if(!dist.startsWith("null")){
-                                Userdata data1 = new Userdata(name,cycledate,dist,cycletime,speed,energy,cycle,tree,gas);
+                                Userdata data1 = new Userdata(name,dist,cycletime,speed,energy,cycle,tree,gas);
                                 dataList.add(data1);
                             }
 
@@ -119,12 +118,4 @@ public class RanklistActivity extends AppCompatActivity {
 
     }
 
-    /*@Override
-    protected void onPause()
-    {
-        super.onPause();
-        Intent i = new Intent(RanklistActivity.this, MainActivity.class);
-        i.putExtra("device_address", getIntent().getStringExtra("device_address"));
-        startActivity(i);
-    }*/
 }

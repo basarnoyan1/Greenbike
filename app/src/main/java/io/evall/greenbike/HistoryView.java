@@ -98,12 +98,4 @@ public class HistoryView extends AppCompatActivity {
         }
     }
 
-    /*@Override
-    protected void onPause()
-    {
-        super.onPause();
-        Intent i = new Intent(HistoryView.this, MainActivity.class);
-        i.putExtra("device_address", getIntent().getStringExtra("device_address"));
-        startActivity(i);
-    }*/
 }

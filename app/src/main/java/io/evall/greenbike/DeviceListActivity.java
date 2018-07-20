@@ -46,7 +46,6 @@ public class DeviceListActivity extends Activity {
         setContentView(R.layout.device_list);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
-        registerReceiver(mReceiver, filter);
         if (savedInstanceState == null) {
             Bundle extras = getIntent().getExtras();
             if(extras == null) {
@@ -57,6 +56,7 @@ public class DeviceListActivity extends Activity {
         } else {
             errormsg = (Boolean) savedInstanceState.getSerializable("ConnectionFailure");
         }
+        registerReceiver(mReceiver, filter);
         vie = findViewById(R.id.view);
         textView1 = (TextView) findViewById(R.id.connecting);
         prg = (ProgressBar) findViewById(R.id.progressBar);
@@ -115,6 +115,7 @@ public class DeviceListActivity extends Activity {
             textView1.setText(getString(R.string.bl_con_key));
             prg.setVisibility(View.VISIBLE);
             vie.setVisibility(View.INVISIBLE);
+            unregisterReceiver(mReceiver);
             Intent i = new Intent(DeviceListActivity.this, MainActivity.class);
             i.putExtra(EXTRA_DEVICE_ADDRESS, address);
             startActivity(i);

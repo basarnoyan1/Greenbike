@@ -1,15 +1,14 @@
 package io.evall.greenbike;
 
 public class Userdata {
-    private String username, cycledate, dist, cycletime, speed, energy, cycle, tree, gas;
+    private String username, dist, cycletime, speed, energy, cycle, tree, gas;
 
     public Userdata() {
     }
 
-    public Userdata(String username, String cycledate, String dist, String cycletime,
+    public Userdata(String username, String dist, String cycletime,
                     String speed, String energy, String cycle, String tree, String gas) {
         this.username = username;
-        this.cycledate = cycledate;
         this.dist = dist;
         this.cycletime = cycletime;
         this.speed = speed;
@@ -24,13 +23,6 @@ public class Userdata {
     }
     public void setUsername(String username) {
         this.username = username;
-    }
-
-    public String getCycledate() {
-        return cycledate;
-    }
-    public void setCycledate(String cycledate) {
-        this.cycledate = cycledate;
     }
 
     public String getDist() {

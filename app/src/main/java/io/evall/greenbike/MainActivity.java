@@ -306,7 +306,6 @@ public class MainActivity extends Activity {
                 Intent i = new Intent(MainActivity.this, HistoryView.class);
                 i.putExtra("device_address", address);
                 startActivity(i);
-               // finish();
             }
         });
 
@@ -316,7 +315,6 @@ public class MainActivity extends Activity {
                 Intent i = new Intent(MainActivity.this, RanklistActivity.class);
                 i.putExtra("device_address", address);
                 startActivity(i);
-                //finish();
                 }
                 else{
                     Snackbar snackbar = Snackbar
@@ -429,7 +427,7 @@ public class MainActivity extends Activity {
                     Intent i = new Intent(MainActivity.this, DeviceListActivity.class);
                     i.putExtra("ConnectionFailure", true);
                     startActivity(i);
-                    finish();
+                   // finish();
                 }
             }
         }
