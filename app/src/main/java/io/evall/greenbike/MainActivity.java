@@ -366,7 +366,7 @@ public class MainActivity extends Activity {
     @Override
     public void onPause() {
         super.onPause();
-        if (dist != null && dist != "0 km") {
+        if (pedal != null && pedal != "0 tur") {
             save.callOnClick();
         }
     }
