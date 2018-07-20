@@ -38,6 +38,7 @@ public class DeviceListActivity extends Activity {
     public static String EXTRA_DEVICE_ADDRESS = "device_address";
     private BluetoothAdapter mBtAdapter;
     private ArrayAdapter<String> mPairedDevicesArrayAdapter;
+    Boolean errormsg = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,7 +47,6 @@ public class DeviceListActivity extends Activity {
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
         registerReceiver(mReceiver, filter);
-        Boolean errormsg = false;
         if (savedInstanceState == null) {
             Bundle extras = getIntent().getExtras();
             if(extras == null) {
@@ -92,7 +92,10 @@ public class DeviceListActivity extends Activity {
 
         if(loc) {
             mBtAdapter.startDiscovery();
-            textView1.setText(getString(R.string.scan_key));
+            if(!errormsg) {
+                prg.setVisibility(View.VISIBLE);
+                textView1.setText(getString(R.string.scan_key));
+            }
         }
 
         if(!loc) {

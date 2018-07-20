@@ -3,6 +3,7 @@ package io.evall.greenbike;
 import android.app.DownloadManager;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -26,10 +27,14 @@ import com.android.volley.toolbox.Volley;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -65,13 +70,13 @@ public class HistoryView extends AppCompatActivity {
                 R.id.txtc_co2,R.id.txtc_speed,R.id.txtc_tree, R.id.txtc_rev, R.id.txtc_energy};
         simpadapt = new SimpleAdapter(this, prolist, R.layout.hcard_layout, from, views);
         lst.setAdapter(simpadapt);
+        File file = new File("/data/data/io.evall.greenbike/files/history.txt");
+
         try{
-            FileInputStream fis = getApplicationContext().openFileInput("history.txt");
-            InputStreamReader isr = new InputStreamReader(fis, "UTF-8");
-            BufferedReader bufferedReader = new BufferedReader(isr);
+            BufferedReader bufferedReader = new BufferedReader(new FileReader(file));
             try {
-                while (bufferedReader.readLine().toString() != null) {
-                    String get = bufferedReader.readLine().toString();
+                while (bufferedReader.readLine() != null) {
+                    String get = bufferedReader.readLine();
                     Map<String, String> datanum = new HashMap<String, String>();
                     String[] rs = get.split("\t");
                     datanum.put("A", rs[0]);//cycledate
@@ -85,6 +90,7 @@ public class HistoryView extends AppCompatActivity {
                     prolist.add(datanum);
                 }
                 Collections.reverse(prolist);
+                bufferedReader.close();
             }
             catch (NullPointerException ex){}
         } catch(IOException ioe){
@@ -92,4 +98,12 @@ public class HistoryView extends AppCompatActivity {
         }
     }
 
+    @Override
+    protected void onPause()
+    {
+        super.onPause();
+        Intent i = new Intent(HistoryView.this, MainActivity.class);
+        i.putExtra("device_address", getIntent().getStringExtra("device_address"));
+        startActivity(i);
+    }
 }

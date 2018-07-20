@@ -126,24 +126,6 @@ public class MainActivity extends Activity {
                     mConnectedThread.write("x");}
                     catch (IOException e) { }
             }
-
-                    /*************************
-                    if(dist != null || dist != "0 km") {
-                        long chrtime = SystemClock.elapsedRealtime() - sensorView3.getBase();
-                        BigDecimal co = new BigDecimal(chrtime / 1000 * 0.125);
-                        co = co.setScale(2, BigDecimal.ROUND_DOWN);
-                        sensorView7.setText(co + " g CO2");
-                        BigDecimal tr = new BigDecimal(chrtime * 6.25 / 100000);
-                        tr = tr.divide(new BigDecimal(1000));
-                        tr = tr.setScale(2, BigDecimal.ROUND_DOWN);
-                        sensorView8.setText(tr + " ağaç");
-                        sensorView5.setText(String.format(Locale.US,"%.1f", 3600 * peri / (chrtime - lasttime)) + " km/h");
-                        double sped = Double.parseDouble(String.format(Locale.US,"%.1f", 3600 * peri / (chrtime - lasttime)));
-                        sensorView6.setText(getCal(gen, hei, wei, age, sped));
-                        //lasttime = chrtime;
-                    }
-                     **************************/
-
             }
         });
 
@@ -322,14 +304,25 @@ public class MainActivity extends Activity {
         hist.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 Intent i = new Intent(MainActivity.this, HistoryView.class);
+                i.putExtra("device_address", address);
                 startActivity(i);
+                finish();
             }
         });
 
         rank.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
+                if(isOnline()){
                 Intent i = new Intent(MainActivity.this, RanklistActivity.class);
+                i.putExtra("device_address", address);
                 startActivity(i);
+                finish();
+                }
+                else{
+                    Snackbar snackbar = Snackbar
+                            .make(sensorView3, "Sıralamaya erişebilmek için internet bağlantısı gerekmektedir.", Snackbar.LENGTH_LONG);
+                    snackbar.show();
+                }
             }
         });
 
@@ -486,7 +479,6 @@ public class MainActivity extends Activity {
         res = res.setScale(1, BigDecimal.ROUND_DOWN);
         return res.toString().replace("," ,".") + " cal";
     }
-
 
     ///
     public String appr_time (long tim, int code){
