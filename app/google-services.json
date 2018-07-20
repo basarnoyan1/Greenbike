@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "158769014303",
+    "firebase_url": "https://greenbike-115c5.firebaseio.com",
+    "project_id": "greenbike-115c5",
+    "storage_bucket": "greenbike-115c5.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:158769014303:android:1fd51102890b1c25",
+        "android_client_info": {
+          "package_name": "io.evall.greenbike"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "158769014303-u1agel7mrvme2efpt4nti3jn5n7fsde6.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "io.evall.greenbike",
+            "certificate_hash": "ef0331ba302304a2f72cc5b637db69f5e19c94e2"
+          }
+        },
+        {
+          "client_id": "158769014303-k8p0aiu5ksie10li0ml1g08i09h3k80e.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCavRCJQhqombkFaXQHXy-QN2Hb-5yCHZk"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "158769014303-k8p0aiu5ksie10li0ml1g08i09h3k80e.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
