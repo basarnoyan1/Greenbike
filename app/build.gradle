@@ -21,8 +21,8 @@ android {
         applicationId "io.evall.greenbike"
         minSdkVersion 15
         targetSdkVersion 27
-        versionCode 33
-        versionName "1.5.2"
+        versionCode 34
+        versionName "1.5.3"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
