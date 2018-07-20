@@ -45,6 +45,7 @@ import java.util.Set;
 
 public class HistoryView extends AppCompatActivity {
     SimpleAdapter simpadapt;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         getWindow().requestFeature(Window.FEATURE_ACTION_BAR_OVERLAY);
@@ -56,7 +57,7 @@ public class HistoryView extends AppCompatActivity {
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setHomeAsUpIndicator(R.mipmap.back);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-        toolbar.setNavigationOnClickListener(new View.OnClickListener(){
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 finish();
@@ -64,15 +65,15 @@ public class HistoryView extends AppCompatActivity {
         });
 
         ListView lst = (ListView) findViewById(R.id.hist_list);
-        List<Map<String, String>> prolist  = new ArrayList<Map<String, String>>();
-        String[] from = {"A","B","C","D","E","F","G","H"};
-        int[] views = { R.id.txtc_date, R.id.txtc_time,R.id.txtc_dist,
-                R.id.txtc_co2,R.id.txtc_speed,R.id.txtc_tree, R.id.txtc_rev, R.id.txtc_energy};
+        List<Map<String, String>> prolist = new ArrayList<Map<String, String>>();
+        String[] from = {"A", "B", "C", "D", "E", "F", "G", "H"};
+        int[] views = {R.id.txtc_date, R.id.txtc_time, R.id.txtc_dist,
+                R.id.txtc_co2, R.id.txtc_speed, R.id.txtc_tree, R.id.txtc_rev, R.id.txtc_energy};
         simpadapt = new SimpleAdapter(this, prolist, R.layout.hcard_layout, from, views);
         lst.setAdapter(simpadapt);
         File file = new File("/data/data/io.evall.greenbike/files/history.txt");
 
-        try{
+        try {
             BufferedReader bufferedReader = new BufferedReader(new FileReader(file));
             try {
                 while (bufferedReader.readLine() != null) {
@@ -91,9 +92,9 @@ public class HistoryView extends AppCompatActivity {
                 }
                 Collections.reverse(prolist);
                 bufferedReader.close();
+            } catch (NullPointerException ex) {
             }
-            catch (NullPointerException ex){}
-        } catch(IOException ioe){
+        } catch (IOException ioe) {
             ioe.printStackTrace();
         }
     }

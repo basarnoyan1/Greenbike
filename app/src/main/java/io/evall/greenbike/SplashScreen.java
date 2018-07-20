@@ -13,7 +13,9 @@ import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
 import android.util.Log;
 import android.view.WindowManager;
+
 import com.crashlytics.android.Crashlytics;
+
 import io.fabric.sdk.android.Fabric;
 
 public class SplashScreen extends Activity {
@@ -32,18 +34,19 @@ public class SplashScreen extends Activity {
 
     private class BackgroundTask extends AsyncTask {
         Intent intent;
+
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
             sharedpref = getSharedPreferences("appData", Context.MODE_PRIVATE);
-            String name = sharedpref.getString("userName",null);
-            if (name != null){
+            String name = sharedpref.getString("userName", null);
+            if (name != null) {
                 intent = new Intent(SplashScreen.this, DeviceListActivity.class);
-            }
-            else {
+            } else {
                 intent = new Intent(SplashScreen.this, WelcomeActivity.class);
             }
         }
+
         @Override
         protected Object doInBackground(Object[] params) {
             try {
@@ -53,6 +56,7 @@ public class SplashScreen extends Activity {
             }
             return null;
         }
+
         @Override
         protected void onPostExecute(Object o) {
             super.onPostExecute(o);

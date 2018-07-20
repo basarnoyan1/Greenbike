@@ -48,10 +48,10 @@ public class DeviceListActivity extends Activity {
         IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
         if (savedInstanceState == null) {
             Bundle extras = getIntent().getExtras();
-            if(extras == null) {
+            if (extras == null) {
                 errormsg = false;
             } else {
-                errormsg= extras.getBoolean("ConnectionFailure");
+                errormsg = extras.getBoolean("ConnectionFailure");
             }
         } else {
             errormsg = (Boolean) savedInstanceState.getSerializable("ConnectionFailure");
@@ -60,15 +60,14 @@ public class DeviceListActivity extends Activity {
         vie = findViewById(R.id.view);
         textView1 = (TextView) findViewById(R.id.connecting);
         prg = (ProgressBar) findViewById(R.id.progressBar);
-        if(errormsg){
+        if (errormsg) {
             textView1.setText(getString(R.string.bl_confail_key));
             vie.setVisibility(View.VISIBLE);
         }
     }
 
     @Override
-    public void onResume()
-    {
+    public void onResume() {
         super.onResume();
         checkBTState();
         mPairedDevicesArrayAdapter = new ArrayAdapter<String>(this, R.layout.device_name);
@@ -79,7 +78,7 @@ public class DeviceListActivity extends Activity {
 
         Boolean loc = PermissionChecker.checkSelfPermission(DeviceListActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED;
 
-        if(!loc) {
+        if (!loc) {
             Set<BluetoothDevice> pairedDevices = mBtAdapter.getBondedDevices();
             if (pairedDevices.size() > 0) {
                 for (BluetoothDevice device : pairedDevices) {
@@ -90,15 +89,15 @@ public class DeviceListActivity extends Activity {
             }
         }
 
-        if(loc) {
+        if (loc) {
             mBtAdapter.startDiscovery();
-            if(!errormsg) {
+            if (!errormsg) {
                 prg.setVisibility(View.VISIBLE);
                 textView1.setText(getString(R.string.scan_key));
             }
         }
 
-        if(!loc) {
+        if (!loc) {
             if (mPairedDevicesArrayAdapter.isEmpty()) {
                 textView1.setText(getString(R.string.bl_not_key));
             }
@@ -115,7 +114,6 @@ public class DeviceListActivity extends Activity {
             textView1.setText(getString(R.string.bl_con_key));
             prg.setVisibility(View.VISIBLE);
             vie.setVisibility(View.INVISIBLE);
-            unregisterReceiver(mReceiver);
             Intent i = new Intent(DeviceListActivity.this, MainActivity.class);
             i.putExtra(EXTRA_DEVICE_ADDRESS, address);
             startActivity(i);
@@ -124,8 +122,8 @@ public class DeviceListActivity extends Activity {
     };
 
     private void checkBTState() {
-        mBtAdapter=BluetoothAdapter.getDefaultAdapter();
-        if(mBtAdapter==null) {
+        mBtAdapter = BluetoothAdapter.getDefaultAdapter();
+        if (mBtAdapter == null) {
             Toast.makeText(getBaseContext(), getString(R.string.bl_nosup_key), Toast.LENGTH_SHORT).show();
         } else {
             if (mBtAdapter.isEnabled()) {
@@ -143,13 +141,12 @@ public class DeviceListActivity extends Activity {
             String action = intent.getAction();
             if (BluetoothDevice.ACTION_FOUND.equals(action)) {
                 BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-                if(device.getName().startsWith("GREENBIKE")) {
+                if (device.getName().startsWith("GREENBIKE")) {
                     mPairedDevicesArrayAdapter.add(device.getName() + "\n" + device.getAddress());
                 }
             }
         }
     };
-
 
 
 }

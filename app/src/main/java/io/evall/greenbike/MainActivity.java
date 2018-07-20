@@ -1,25 +1,5 @@
 package io.evall.greenbike;
 
-import java.io.BufferedReader;
-import java.io.Console;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.math.BigDecimal;
-import java.text.DateFormat;
-import java.text.DecimalFormat;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
-import java.util.UUID;
-import java.util.concurrent.TimeUnit;
-
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.bluetooth.BluetoothAdapter;
@@ -51,9 +31,18 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
-import org.json.JSONObject;
-
-import static java.lang.Math.round;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
+import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 public class MainActivity extends Activity {
     SharedPreferences sharedpref;
@@ -94,38 +83,40 @@ public class MainActivity extends Activity {
 
         name = sharedpref.getString("userName", null);
         salt = sharedpref.getString("salt", null);
-        wei =  sharedpref.getInt("userWei", 1);
-        hei =  sharedpref.getInt("userHei", 1);
-        age =  sharedpref.getInt("userAge", 1);
+        wei = sharedpref.getInt("userWei", 1);
+        hei = sharedpref.getInt("userHei", 1);
+        age = sharedpref.getInt("userAge", 1);
         gen = sharedpref.getString("userGender", "Erkek");
 
         nametxt.setText(getString(R.string.hello_key) + ", " + name + "!");
         sensorView2 = (TextView) findViewById(R.id.sensorView2);
         sensorView3 = (Chronometer) findViewById(R.id.sensorView3);
         sensorView3.setText("00:00:00");
-        sensorView3.setOnChronometerTickListener(new Chronometer.OnChronometerTickListener(){
+        sensorView3.setOnChronometerTickListener(new Chronometer.OnChronometerTickListener() {
             @Override
             public void onChronometerTick(Chronometer chronometer) {
                 long time = SystemClock.elapsedRealtime() - chronometer.getBase();
-                int h   = (int)(time /3600000);
-                int m = (int)(time - h*3600000)/60000;
-                int s= (int)(time - h*3600000- m*60000)/1000 ;
-                String t = (h < 10 ? "0"+h: h)+":"+(m < 10 ? "0"+m: m)+":"+ (s < 10 ? "0"+s: s);
+                int h = (int) (time / 3600000);
+                int m = (int) (time - h * 3600000) / 60000;
+                int s = (int) (time - h * 3600000 - m * 60000) / 1000;
+                String t = (h < 10 ? "0" + h : h) + ":" + (m < 10 ? "0" + m : m) + ":" + (s < 10 ? "0" + s : s);
                 chronometer.setText(t);
-                if((time - lasttime)>5000){
+                if ((time - lasttime) > 5000) {
                     Snackbar snackbar = Snackbar
                             .make(sensorView3, getString(R.string.autosave_key), Snackbar.LENGTH_LONG);
                     snackbar.show();
                     save.callOnClick();
                 }
                 boolean bl = btSocket.isConnected();
-                if(!btSocket.isConnected()){
-                try { btSocket.connect();
-                    mConnectedThread = new ConnectedThread(btSocket);
-                    mConnectedThread.start();
-                    mConnectedThread.write("x");}
-                    catch (IOException e) { }
-            }
+                if (!btSocket.isConnected()) {
+                    try {
+                        btSocket.connect();
+                        mConnectedThread = new ConnectedThread(btSocket);
+                        mConnectedThread.start();
+                        mConnectedThread.write("x");
+                    } catch (IOException e) {
+                    }
+                }
             }
         });
 
@@ -142,7 +133,7 @@ public class MainActivity extends Activity {
         if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
             nametxt.setVisibility(View.INVISIBLE);
             img.setVisibility(View.INVISIBLE);
-        } else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT){
+        } else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
             nametxt.setVisibility(View.VISIBLE);
             img.setVisibility(View.VISIBLE);
         }
@@ -167,20 +158,20 @@ public class MainActivity extends Activity {
                         }
 
                         sensorView2.setText(Integer.toString(value - frnum) + " tur");
-                        sensorView4.setText(String.format(Locale.US,"%.3f", ((value - frnum) * peri / 1000)) + " km");
+                        sensorView4.setText(String.format(Locale.US, "%.3f", ((value - frnum) * peri / 1000)) + " km");
                         long chrtime = SystemClock.elapsedRealtime() - sensorView3.getBase();
 
-                        BigDecimal co = new BigDecimal(chrtime/1000 * 0.125);
+                        BigDecimal co = new BigDecimal(chrtime / 1000 * 0.125);
                         co = co.setScale(2, BigDecimal.ROUND_DOWN);
-                        sensorView7.setText(co.toString().replace("," ,".") + " g CO2");
+                        sensorView7.setText(co.toString().replace(",", ".") + " g CO2");
 
-                        BigDecimal tr = new BigDecimal(chrtime*6.25/100000);
+                        BigDecimal tr = new BigDecimal(chrtime * 6.25 / 100000);
                         tr = tr.divide(new BigDecimal(1000));
                         tr = tr.setScale(2, BigDecimal.ROUND_DOWN);
-                        sensorView8.setText(tr.toString().replace("," ,".") + " ağaç");
+                        sensorView8.setText(tr.toString().replace(",", ".") + " ağaç");
 
-                        sensorView5.setText(String.format(Locale.US,"%.1f", 3600 * peri/(chrtime-lasttime)) + " km/h");
-                        double sped =  Double.parseDouble(String.format(Locale.US,"%.1f", 3600 * peri/(chrtime-lasttime)));
+                        sensorView5.setText(String.format(Locale.US, "%.1f", 3600 * peri / (chrtime - lasttime)) + " km/h");
+                        double sped = Double.parseDouble(String.format(Locale.US, "%.1f", 3600 * peri / (chrtime - lasttime)));
                         sensorView6.setText(getCal(gen, hei, wei, age, sped));
                         lasttime = chrtime;
                         dataInPrint = " ";
@@ -209,7 +200,7 @@ public class MainActivity extends Activity {
                             MainActivity.this).create();
                     alertDialog.setTitle("Ürettiğin elektrik enerjisiyle:");
                     alertDialog.setMessage(
-                                    appr_time(chrtime, 0) + "su ısıtıcısı,\n" +
+                            appr_time(chrtime, 0) + "su ısıtıcısı,\n" +
                                     appr_time(chrtime, 1) + "ampul,\n" +
                                     appr_time(chrtime, 2) + "klima çalıştırabilir ve\n" +
                                     appr_time(chrtime, 3) + "basınçlı hava üretebilirdin."
@@ -219,9 +210,8 @@ public class MainActivity extends Activity {
                         }
                     });
                     alertDialog.show();
-                }
-                catch (Exception e){
-                    Log.e("Error",e.getMessage());
+                } catch (Exception e) {
+                    Log.e("Error", e.getMessage());
                 }
 
                 //
@@ -230,12 +220,12 @@ public class MainActivity extends Activity {
                 sensorView3.stop();
                 sensorView3.setBase(SystemClock.elapsedRealtime());
                 sensorView3.setText("00:00:00");
-                sensorView2.setText("0 "+getString(R.string.tour_key));
+                sensorView2.setText("0 " + getString(R.string.tour_key));
                 sensorView4.setText("0 km");
                 sensorView5.setText("0 km/h");
                 sensorView6.setText("0 cal");
                 sensorView7.setText("0 g CO2");
-                sensorView8.setText("0 "+getString(R.string.tree_key));
+                sensorView8.setText("0 " + getString(R.string.tree_key));
 
                 String strText = date + "\t" + dist + "\t" + time + "\t" +
                         speed + "\t" + energy + "\t" + pedal + "\t" + tree + "\t" + carbo + "\n";
@@ -265,30 +255,40 @@ public class MainActivity extends Activity {
 
 
                 ///////////////////////////
-                if(isOnline()){try{
-                    String url = "http://greenbike.evall.io/api.php";
-                    RequestQueue queue = Volley.newRequestQueue(MainActivity.this);
-                    StringRequest putRequest = new StringRequest(Request.Method.POST, url,
-                            new Response.Listener<String>() { @Override public void onResponse(String response) { }},
-                            new Response.ErrorListener() { @Override public void onErrorResponse(VolleyError error) { Log.e("Error",error.toString()); }}
-                    ) {
-                        @Override
-                        protected Map<String, String> getParams() {
-                            Map<String, String> params = new HashMap<String, String>();
-                            params.put("username", name);
-                            params.put("salt", salt);
-                            params.put("dist", dist.substring(0, dist.lastIndexOf(" km")).replace(",","."));
-                            params.put("cycletime", time);
-                            params.put("speed", speed.substring(0, speed.lastIndexOf(" km/h")).replace(",","."));
-                            params.put("energy", energy.substring(0, energy.lastIndexOf(" cal")).replace(",","."));
-                            params.put("cycle", pedal.substring(0, pedal.lastIndexOf(" "+getString(R.string.tour_key))));
-                            params.put("tree", tree.substring(0, tree.lastIndexOf(" "+getString(R.string.tree_key))).replace(",","."));
-                            params.put("gas", carbo.substring(0, carbo.lastIndexOf(" g")).replace(",","."));
-                            params.put("actionid","400");
-                            return params;
-                        }
-                    };
-                    queue.add(putRequest);
+                if (isOnline()) {
+                    try {
+                        String url = "http://greenbike.evall.io/api.php";
+                        RequestQueue queue = Volley.newRequestQueue(MainActivity.this);
+                        StringRequest putRequest = new StringRequest(Request.Method.POST, url,
+                                new Response.Listener<String>() {
+                                    @Override
+                                    public void onResponse(String response) {
+                                    }
+                                },
+                                new Response.ErrorListener() {
+                                    @Override
+                                    public void onErrorResponse(VolleyError error) {
+                                        Log.e("Error", error.toString());
+                                    }
+                                }
+                        ) {
+                            @Override
+                            protected Map<String, String> getParams() {
+                                Map<String, String> params = new HashMap<String, String>();
+                                params.put("username", name);
+                                params.put("salt", salt);
+                                params.put("dist", dist.substring(0, dist.lastIndexOf(" km")).replace(",", "."));
+                                params.put("cycletime", time);
+                                params.put("speed", speed.substring(0, speed.lastIndexOf(" km/h")).replace(",", "."));
+                                params.put("energy", energy.substring(0, energy.lastIndexOf(" cal")).replace(",", "."));
+                                params.put("cycle", pedal.substring(0, pedal.lastIndexOf(" " + getString(R.string.tour_key))));
+                                params.put("tree", tree.substring(0, tree.lastIndexOf(" " + getString(R.string.tree_key))).replace(",", "."));
+                                params.put("gas", carbo.substring(0, carbo.lastIndexOf(" g")).replace(",", "."));
+                                params.put("actionid", "400");
+                                return params;
+                            }
+                        };
+                        queue.add(putRequest);
 
                     /*dist = "0 km";
                     time = "00:00:00";
@@ -297,7 +297,9 @@ public class MainActivity extends Activity {
                     pedal = "0 tur";
                     tree = "0 ağaç";
                     carbo = "0 g CO2";*/
-                }catch(Exception e){}}
+                    } catch (Exception e) {
+                    }
+                }
                 /////////////////////////////////
 
             }
@@ -313,12 +315,11 @@ public class MainActivity extends Activity {
 
         rank.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                if(isOnline()){
-                Intent i = new Intent(MainActivity.this, RanklistActivity.class);
-                i.putExtra("device_address", address);
-                startActivity(i);
-                }
-                else{
+                if (isOnline()) {
+                    Intent i = new Intent(MainActivity.this, RanklistActivity.class);
+                    i.putExtra("device_address", address);
+                    startActivity(i);
+                } else {
                     Snackbar snackbar = Snackbar
                             .make(sensorView3, "Sıralamaya erişebilmek için internet bağlantısı gerekmektedir.", Snackbar.LENGTH_LONG);
                     snackbar.show();
@@ -336,6 +337,7 @@ public class MainActivity extends Activity {
         return device.createRfcommSocketToServiceRecord(BTMODULEUUID);
         //creates secure outgoing connecetion with BT device using UUID
     }
+
     @Override
     public void onResume() {
         super.onResume();
@@ -351,7 +353,7 @@ public class MainActivity extends Activity {
             btSocket.connect();
         } catch (IOException e) {
             try {
-                    //btSocket.close();
+                //btSocket.close();
             } catch (Exception e2) {
                 //insert code to deal with this
             }
@@ -360,17 +362,20 @@ public class MainActivity extends Activity {
         mConnectedThread.start();
         mConnectedThread.write("x");
     }
+
     @Override
     public void onPause() {
         super.onPause();
-        if(dist != null && dist != "0 km"){
-            save.callOnClick();}
+        if (dist != null && dist != "0 km") {
+            save.callOnClick();
+        }
     }
+
     @Override
-    protected void onStop()
-    {
+    protected void onStop() {
         super.onStop();
     }
+
     private void checkBTState() {
 
         if (btAdapter == null) {
@@ -383,6 +388,7 @@ public class MainActivity extends Activity {
             }
         }
     }
+
     private class ConnectedThread extends Thread {
         private final InputStream mmInStream;
         private final OutputStream mmOutStream;
@@ -425,79 +431,98 @@ public class MainActivity extends Activity {
             try {
                 mmOutStream.write(msgBuffer);                //write bytes over BT connection via outstream
             } catch (IOException e) {
-                if(pedal == null) {
+                if (pedal == null) {
                     Intent i = new Intent(MainActivity.this, DeviceListActivity.class);
                     i.putExtra("ConnectionFailure", true);
                     startActivity(i);
-                   // finish();
+                    // finish();
                 }
             }
         }
     }
+
     public boolean isOnline() {
         ConnectivityManager cm =
                 (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo netInfo = cm.getActiveNetworkInfo();
         return netInfo != null && netInfo.isConnectedOrConnecting();
     }
+
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
         if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
             nametxt.setVisibility(View.INVISIBLE);
             img.setVisibility(View.INVISIBLE);
-        } else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT){
+        } else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
             nametxt.setVisibility(View.VISIBLE);
             img.setVisibility(View.VISIBLE);
         }
     }
 
-    public String getCal(String gender, int he, int we, int ag, double spe){
+    public String getCal(String gender, int he, int we, int ag, double spe) {
         double bmr;
         double mets;
-        if(gender == "Erkek"){ bmr = 10 * we + 6.25 * he - 5 * ag + 5; }
-        else{ bmr = 10 * we + 6.25 * he - 5 * ag - 161; }
+        if (gender == "Erkek") {
+            bmr = 10 * we + 6.25 * he - 5 * ag + 5;
+        } else {
+            bmr = 10 * we + 6.25 * he - 5 * ag - 161;
+        }
 
-        if(spe<0){mets= 1;}
-        else if(spe<5){mets= 3.8 - (5-spe)*2/9;}
-        else if(spe <10){mets= 4.8 - (10-spe)*2/10;}
-        else if (spe <15){mets= 5.9 - (15-spe)*2/11;}
-        else if (spe <20){mets= 7.1 - (20-spe)*2/12;}
-        else if (spe <25){mets= 8.4 - (25-spe)*2/13;}
-        else if (spe <30){mets= 9.8 - (30-spe)*2/14;}
-        else if (spe <35){mets= 11.3 - (35-spe)*2/15;}
-        else if (spe <40){mets= 12.9 - (40-spe)*2/16;}
-        else if (spe <45){mets= 14.6 - (45-spe)*2/17;}
-        else if (spe <50){mets= 16.4 - (50-spe)*2/18;}
-        else {mets = 18.3;}
+        if (spe < 0) {
+            mets = 1;
+        } else if (spe < 5) {
+            mets = 3.8 - (5 - spe) * 2 / 9;
+        } else if (spe < 10) {
+            mets = 4.8 - (10 - spe) * 2 / 10;
+        } else if (spe < 15) {
+            mets = 5.9 - (15 - spe) * 2 / 11;
+        } else if (spe < 20) {
+            mets = 7.1 - (20 - spe) * 2 / 12;
+        } else if (spe < 25) {
+            mets = 8.4 - (25 - spe) * 2 / 13;
+        } else if (spe < 30) {
+            mets = 9.8 - (30 - spe) * 2 / 14;
+        } else if (spe < 35) {
+            mets = 11.3 - (35 - spe) * 2 / 15;
+        } else if (spe < 40) {
+            mets = 12.9 - (40 - spe) * 2 / 16;
+        } else if (spe < 45) {
+            mets = 14.6 - (45 - spe) * 2 / 17;
+        } else if (spe < 50) {
+            mets = 16.4 - (50 - spe) * 2 / 18;
+        } else {
+            mets = 18.3;
+        }
 
-        long chrt = SystemClock.elapsedRealtime() - sensorView3.getBase();;
-        BigDecimal tim = new BigDecimal(chrt/3600);
-        BigDecimal bd1 = new BigDecimal(bmr * mets/24);
-        BigDecimal res  = tim.multiply(bd1);
+        long chrt = SystemClock.elapsedRealtime() - sensorView3.getBase();
+        ;
+        BigDecimal tim = new BigDecimal(chrt / 3600);
+        BigDecimal bd1 = new BigDecimal(bmr * mets / 24);
+        BigDecimal res = tim.multiply(bd1);
         res = res.divide(new BigDecimal(1000));
         res = res.setScale(1, BigDecimal.ROUND_DOWN);
-        return res.toString().replace("," ,".") + " cal";
+        return res.toString().replace(",", ".") + " cal";
     }
 
     ///
-    public String appr_time (long tim, int code){
+    public String appr_time(long tim, int code) {
         String res = null;
-        switch (code){
+        switch (code) {
             case 0://Su ısıtıcısı
-                try{
+                try {
                     BigDecimal t = new BigDecimal(tim);
                     t = t.divide(new BigDecimal(21600));
                     t = t.divide(new BigDecimal(1000));
                     t = t.setScale(2, BigDecimal.ROUND_DOWN);
-                    res = t.toString().replace("," ,".") + " kez ";
-                }catch (Exception e){
+                    res = t.toString().replace(",", ".") + " kez ";
+                } catch (Exception e) {
                     res = "0 kez ";
                 }
                 break;
 
             case 1://Ampul
-                long millis = tim *60 /16;
+                long millis = tim * 60 / 16;
                 res = String.format("%02d:%02d:%02d",
                         TimeUnit.MILLISECONDS.toHours(millis),
                         TimeUnit.MILLISECONDS.toMinutes(millis) -
@@ -507,7 +532,7 @@ public class MainActivity extends Activity {
                 break;
 
             case 2://Klima
-                long milli = tim *10 /35;
+                long milli = tim * 10 / 35;
                 res = String.format("%02d:%02d:%02d",
                         TimeUnit.MILLISECONDS.toHours(milli),
                         TimeUnit.MILLISECONDS.toMinutes(milli) -
@@ -518,7 +543,7 @@ public class MainActivity extends Activity {
 
             case 3://Basınçlı hava
                 long mill = tim / 540;
-                res = mill/1000 + " s ";
+                res = mill / 1000 + " s ";
                 break;
         }
 

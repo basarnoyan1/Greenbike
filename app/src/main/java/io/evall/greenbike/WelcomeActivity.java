@@ -49,6 +49,7 @@ public class WelcomeActivity extends Activity {
     EditText name, age, hei, wei;
     RadioButton male, female;
     boolean isMale = true;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -59,7 +60,7 @@ public class WelcomeActivity extends Activity {
         hei = (EditText) findViewById(R.id.editHeight);
         wei = (EditText) findViewById(R.id.editMass);
 
-        if(Integer.valueOf(android.os.Build.VERSION.SDK)>22) {
+        if (Integer.valueOf(android.os.Build.VERSION.SDK) > 22) {
             if (ContextCompat.checkSelfPermission(WelcomeActivity.this,
                     android.Manifest.permission.ACCESS_COARSE_LOCATION)
                     != PackageManager.PERMISSION_GRANTED) {
@@ -71,11 +72,12 @@ public class WelcomeActivity extends Activity {
                             new String[]{Manifest.permission.ACCESS_COARSE_LOCATION},
                             210);
                 }
-            } else { }
+            } else {
+            }
         }
 
 
-        if(!isOnline()){
+        if (!isOnline()) {
             AlertDialog alertDialog = new AlertDialog.Builder(
                     WelcomeActivity.this).create();
             alertDialog.setTitle("İnternet bağlantınızı kontrol ediniz.");
@@ -90,17 +92,15 @@ public class WelcomeActivity extends Activity {
         }
         sharedpref = getSharedPreferences("appData", Context.MODE_PRIVATE);
         RadioGroup radioGroup = (RadioGroup) findViewById(R.id.radioGroup2);
-        radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener()
-        {
+        radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
-                switch (checkedId)
-                {
+                switch (checkedId) {
                     case R.id.radioMale:
                         isMale = true;
                         break;
                     case R.id.radieFemale:
-                        isMale=false;
+                        isMale = false;
                         break;
                 }
             }
@@ -108,61 +108,58 @@ public class WelcomeActivity extends Activity {
         setbtn = (Button) findViewById(R.id.setbutton);
         setbtn.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                if(!name.getText().toString().isEmpty() && !age.getText().toString().isEmpty()
-                        && !hei.getText().toString().isEmpty() && !wei.getText().toString().isEmpty()){
-                final SharedPreferences.Editor editor = sharedpref.edit();
-                editor.putString("userName", name.getText().toString());
-                editor.putInt("userAge", Integer.parseInt(age.getText().toString()));
-                editor.putInt("userHei", Integer.parseInt(hei.getText().toString()));
-                editor.putInt("userWei", Integer.parseInt(wei.getText().toString()));
-                if(isMale){
-                    editor.putString("userGender", "Erkek");
-                }
-                else {
-                    editor.putString("userGender", "Kadın");
-                }
-                editor.commit();
-                String url = "http://greenbike.evall.io/api.php";
-                RequestQueue queue = Volley.newRequestQueue(WelcomeActivity.this);
-                StringRequest postRequest = new StringRequest(Request.Method.POST, url,
-                        new Response.Listener<String>()
-                        {
-                            @Override
-                            public void onResponse(String response) {
-                                try{
-                                    JSONObject reader = new JSONObject(response);
-                                    JSONObject sys = reader.getJSONObject("userdata");
-                                    String resp = sys.getString("salt");
-                                    Log.d("salt", resp);
-                                    SharedPreferences sharedprf = getSharedPreferences("appData", Context.MODE_PRIVATE);
-                                    SharedPreferences.Editor editr = sharedprf.edit();
-                                    editr.putString("salt", resp);
-                                    editr.commit();}
-                                    catch (JSONException j){j.getMessage();}
-                            }
-                        },
-                        new Response.ErrorListener()
-                        {
-                            @Override
-                            public void onErrorResponse(VolleyError error) {
-                                Log.d("Error", error.getMessage());
-                            }
-                        }
-                ) {
-                    @Override
-                    protected Map<String, String> getParams()
-                    {
-                        Map<String, String>  params = new HashMap<String, String>();
-                        params.put("username", name.getText().toString());
-                        params.put("actionid","200");
-                        return params;
+                if (!name.getText().toString().isEmpty() && !age.getText().toString().isEmpty()
+                        && !hei.getText().toString().isEmpty() && !wei.getText().toString().isEmpty()) {
+                    final SharedPreferences.Editor editor = sharedpref.edit();
+                    editor.putString("userName", name.getText().toString());
+                    editor.putInt("userAge", Integer.parseInt(age.getText().toString()));
+                    editor.putInt("userHei", Integer.parseInt(hei.getText().toString()));
+                    editor.putInt("userWei", Integer.parseInt(wei.getText().toString()));
+                    if (isMale) {
+                        editor.putString("userGender", "Erkek");
+                    } else {
+                        editor.putString("userGender", "Kadın");
                     }
-                };
-                queue.add(postRequest);
-                Intent intent = new Intent(WelcomeActivity.this, DeviceListActivity.class);
-                startActivity(intent);
-            }
-            else{
+                    editor.commit();
+                    String url = "http://greenbike.evall.io/api.php";
+                    RequestQueue queue = Volley.newRequestQueue(WelcomeActivity.this);
+                    StringRequest postRequest = new StringRequest(Request.Method.POST, url,
+                            new Response.Listener<String>() {
+                                @Override
+                                public void onResponse(String response) {
+                                    try {
+                                        JSONObject reader = new JSONObject(response);
+                                        JSONObject sys = reader.getJSONObject("userdata");
+                                        String resp = sys.getString("salt");
+                                        Log.d("salt", resp);
+                                        SharedPreferences sharedprf = getSharedPreferences("appData", Context.MODE_PRIVATE);
+                                        SharedPreferences.Editor editr = sharedprf.edit();
+                                        editr.putString("salt", resp);
+                                        editr.commit();
+                                    } catch (JSONException j) {
+                                        j.getMessage();
+                                    }
+                                }
+                            },
+                            new Response.ErrorListener() {
+                                @Override
+                                public void onErrorResponse(VolleyError error) {
+                                    Log.d("Error", error.getMessage());
+                                }
+                            }
+                    ) {
+                        @Override
+                        protected Map<String, String> getParams() {
+                            Map<String, String> params = new HashMap<String, String>();
+                            params.put("username", name.getText().toString());
+                            params.put("actionid", "200");
+                            return params;
+                        }
+                    };
+                    queue.add(postRequest);
+                    Intent intent = new Intent(WelcomeActivity.this, DeviceListActivity.class);
+                    startActivity(intent);
+                } else {
                     Snackbar snackbar = Snackbar
                             .make(name, getString(R.string.wlc_check_key), Snackbar.LENGTH_SHORT);
                     snackbar.show();
@@ -171,12 +168,14 @@ public class WelcomeActivity extends Activity {
             }
         });
     }
+
     public boolean isOnline() {
         ConnectivityManager cm =
                 (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo netInfo = cm.getActiveNetworkInfo();
         return netInfo != null && netInfo.isConnectedOrConnecting();
     }
+
     @Override
     public void onRequestPermissionsResult(int requestCode,
                                            String permissions[], int[] grantResults) {
