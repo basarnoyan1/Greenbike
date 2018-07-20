@@ -290,13 +290,13 @@ public class MainActivity extends Activity {
                         };
                         queue.add(putRequest);
 
-                    /*dist = "0 km";
+                    dist = "0 km";
                     time = "00:00:00";
                     speed = "0 km/h";
                     energy = "0 cal";
                     pedal = "0 tur";
                     tree = "0 ağaç";
-                    carbo = "0 g CO2";*/
+                    carbo = "0 g CO2";
                     } catch (Exception e) {
                     }
                 }
