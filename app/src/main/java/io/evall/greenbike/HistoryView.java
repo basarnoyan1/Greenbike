@@ -29,6 +29,7 @@ import org.json.JSONObject;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
@@ -41,6 +42,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Scanner;
 import java.util.Set;
 
 public class HistoryView extends AppCompatActivity {
@@ -72,31 +74,26 @@ public class HistoryView extends AppCompatActivity {
         simpadapt = new SimpleAdapter(this, prolist, R.layout.hcard_layout, from, views);
         lst.setAdapter(simpadapt);
         File file = new File("/data/data/io.evall.greenbike/files/history.txt");
-
-        try {
-            BufferedReader bufferedReader = new BufferedReader(new FileReader(file));
-            try {
-                while (bufferedReader.readLine() != null) {
-                    String get = bufferedReader.readLine();
-                    Map<String, String> datanum = new HashMap<String, String>();
-                    String[] rs = get.split("\t");
-                    datanum.put("A", rs[0]);//cycledate
-                    datanum.put("B", rs[2]);//dist
-                    datanum.put("C", rs[1]);//cycletime
-                    datanum.put("D", rs[7]);//speed
-                    datanum.put("E", rs[3]);//energy
-                    datanum.put("F", rs[6]);//cycle
-                    datanum.put("G", rs[5]);//tree
-                    datanum.put("H", rs[4]);//gas
-                    prolist.add(datanum);
-                }
-                Collections.reverse(prolist);
-                bufferedReader.close();
-            } catch (NullPointerException ex) {
+        try{
+            Scanner scanner = new Scanner(file);
+            while(scanner.hasNextLine()){
+                Map<String, String> datanum = new HashMap<String, String>();
+                String[] rs = scanner.nextLine().split("\t");
+                datanum.put("A", rs[0]); //cycledate
+                datanum.put("B", rs[2]); //dist
+                datanum.put("C", rs[1]); //cycletime
+                datanum.put("D", rs[7]); //speed
+                datanum.put("E", rs[3]); //energy
+                datanum.put("F", rs[6]); //cycle
+                datanum.put("G", rs[5]); //tree
+                datanum.put("H", rs[4]); //gas
+                prolist.add(datanum);
             }
-        } catch (IOException ioe) {
-            ioe.printStackTrace();
+            Collections.reverse(prolist);
+            scanner.close();
         }
+        catch (FileNotFoundException e) { }
+
     }
 
 }

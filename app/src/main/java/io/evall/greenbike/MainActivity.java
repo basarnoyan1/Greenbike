@@ -62,7 +62,7 @@ public class MainActivity extends Activity {
     private static final UUID BTMODULEUUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
     private static String address;
 
-    boolean first = true;
+    boolean first = true, isStarted = false;
     int frnum;
     double tire_dia = 0.66; //Lastik çapı 26"
     double acc = 9.80665; //
@@ -155,6 +155,7 @@ public class MainActivity extends Activity {
                             sensorView3.setBase(SystemClock.elapsedRealtime());
                             sensorView3.setText("00:00:00");
                             sensorView3.start();
+                            isStarted = true;
                         }
 
                         sensorView2.setText(Integer.toString(value - frnum) + " tur");
@@ -218,6 +219,7 @@ public class MainActivity extends Activity {
 
                 first = !first;
                 sensorView3.stop();
+                isStarted = false;
                 sensorView3.setBase(SystemClock.elapsedRealtime());
                 sensorView3.setText("00:00:00");
                 sensorView2.setText("0 " + getString(R.string.tour_key));
@@ -289,14 +291,6 @@ public class MainActivity extends Activity {
                             }
                         };
                         queue.add(putRequest);
-
-                    dist = "0 km";
-                    time = "00:00:00";
-                    speed = "0 km/h";
-                    energy = "0 cal";
-                    pedal = "0 tur";
-                    tree = "0 ağaç";
-                    carbo = "0 g CO2";
                     } catch (Exception e) {
                     }
                 }
@@ -337,7 +331,6 @@ public class MainActivity extends Activity {
         return device.createRfcommSocketToServiceRecord(BTMODULEUUID);
         //creates secure outgoing connecetion with BT device using UUID
     }
-
     @Override
     public void onResume() {
         super.onResume();
@@ -366,7 +359,7 @@ public class MainActivity extends Activity {
     @Override
     public void onPause() {
         super.onPause();
-        if (pedal != null && pedal != "0 tur") {
+        if (isStarted) {
             save.callOnClick();
         }
     }
@@ -375,7 +368,6 @@ public class MainActivity extends Activity {
     protected void onStop() {
         super.onStop();
     }
-
     private void checkBTState() {
 
         if (btAdapter == null) {
@@ -388,7 +380,6 @@ public class MainActivity extends Activity {
             }
         }
     }
-
     private class ConnectedThread extends Thread {
         private final InputStream mmInStream;
         private final OutputStream mmOutStream;
@@ -435,19 +426,17 @@ public class MainActivity extends Activity {
                     Intent i = new Intent(MainActivity.this, DeviceListActivity.class);
                     i.putExtra("ConnectionFailure", true);
                     startActivity(i);
-                    // finish();
+                    //finish();
                 }
             }
         }
     }
-
     public boolean isOnline() {
         ConnectivityManager cm =
                 (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo netInfo = cm.getActiveNetworkInfo();
         return netInfo != null && netInfo.isConnectedOrConnecting();
     }
-
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
@@ -459,7 +448,6 @@ public class MainActivity extends Activity {
             img.setVisibility(View.VISIBLE);
         }
     }
-
     public String getCal(String gender, int he, int we, int ag, double spe) {
         double bmr;
         double mets;
@@ -504,8 +492,6 @@ public class MainActivity extends Activity {
         res = res.setScale(1, BigDecimal.ROUND_DOWN);
         return res.toString().replace(",", ".") + " cal";
     }
-
-    ///
     public String appr_time(long tim, int code) {
         String res = null;
         switch (code) {
@@ -549,7 +535,7 @@ public class MainActivity extends Activity {
 
         return res;
     }
-    ///
+
 
 }
 
