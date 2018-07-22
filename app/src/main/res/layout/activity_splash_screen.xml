@@ -10,17 +10,18 @@
 
     <View
         android:id="@+id/view3"
-        android:layout_width="207dp"
-        android:layout_height="208dp"
+        android:layout_width="240dp"
+        android:layout_height="240dp"
         android:layout_marginBottom="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
-        android:background="@drawable/gb_large"
+        android:background="@mipmap/icon_foreground"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
 </android.support.constraint.ConstraintLayout>
