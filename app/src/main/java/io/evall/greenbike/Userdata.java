@@ -1,21 +1,28 @@
 package io.evall.greenbike;
 
 public class Userdata {
-    private String username, dist, cycletime, speed, energy, cycle, tree, gas;
+    private String rank, username, dist, cycletime, speed, energy, tree, gas;
 
     public Userdata() {
     }
 
-    public Userdata(String username, String dist, String cycletime,
-                    String speed, String energy, String cycle, String tree, String gas) {
+    public Userdata(String rank, String username, String dist, String cycletime,
+                    String speed, String energy, String tree, String gas) {
+        this.rank = rank;
         this.username = username;
         this.dist = dist;
         this.cycletime = cycletime;
         this.speed = speed;
         this.energy = energy;
-        this.cycle = cycle;
         this.tree = tree;
         this.gas = gas;
+    }
+
+    public String getRank() {
+        return rank;
+    }
+    public void setRank(String rank) {
+        this.rank = rank;
     }
 
     public String getUsername() {
@@ -51,13 +58,6 @@ public class Userdata {
     }
     public void setEnergy(String energy) {
         this.energy = energy;
-    }
-
-    public String getCycle() {
-        return cycle;
-    }
-    public void setCycle(String cycle) {
-        this.cycle = cycle;
     }
 
     public String getTree() {

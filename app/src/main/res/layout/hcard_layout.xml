@@ -24,7 +24,7 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="16dp"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="5dp"
+        android:layout_marginTop="4dp"
         android:text="00:01:45"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
@@ -34,58 +34,53 @@
         android:id="@+id/txtc_dist"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="24dp"
-        android:layout_marginStart="24dp"
-        android:layout_marginTop="5dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginStart="16dp"
         android:text="10 km"
         android:textStyle="bold"
         app:layout_constraintStart_toEndOf="@+id/txtc_time"
-        app:layout_constraintTop_toBottomOf="@+id/txtc_date" />
+        app:layout_constraintTop_toTopOf="@+id/txtc_time" />
 
     <TextView
         android:id="@+id/txtc_co2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="24dp"
-        android:layout_marginStart="24dp"
-        android:layout_marginTop="5dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginStart="16dp"
         android:text="2 g CO2"
         app:layout_constraintStart_toEndOf="@+id/txtc_tree"
-        app:layout_constraintTop_toBottomOf="@+id/txtc_speed" />
+        app:layout_constraintTop_toTopOf="@+id/txtc_tree" />
 
     <TextView
         android:id="@+id/txtc_speed"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="24dp"
-        android:layout_marginStart="24dp"
-        android:layout_marginTop="5dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginStart="16dp"
         android:text="25 km/h"
         android:textStyle="bold"
         app:layout_constraintStart_toEndOf="@+id/txtc_dist"
-        app:layout_constraintTop_toBottomOf="@+id/txtc_date" />
+        app:layout_constraintTop_toTopOf="@+id/txtc_dist" />
 
     <TextView
         android:id="@+id/txtc_tree"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="24dp"
-        android:layout_marginStart="24dp"
-        android:layout_marginTop="5dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginStart="16dp"
         android:text="1 ağaç"
         app:layout_constraintStart_toEndOf="@+id/txtc_rev"
-        app:layout_constraintTop_toBottomOf="@+id/txtc_speed" />
+        app:layout_constraintTop_toTopOf="@+id/txtc_rev" />
 
     <TextView
         android:id="@+id/txtc_rev"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="24dp"
-        android:layout_marginStart="24dp"
-        android:layout_marginTop="5dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginStart="16dp"
         android:text="134 tur"
         app:layout_constraintStart_toEndOf="@+id/txtc_energy"
-        app:layout_constraintTop_toBottomOf="@+id/txtc_dist" />
+        app:layout_constraintTop_toTopOf="@+id/txtc_energy" />
 
     <TextView
         android:id="@+id/txtc_energy"
@@ -94,7 +89,7 @@
         android:layout_marginBottom="8dp"
         android:layout_marginLeft="16dp"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="5dp"
+        android:layout_marginTop="4dp"
         android:text="13 cal"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"

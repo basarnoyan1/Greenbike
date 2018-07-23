@@ -13,16 +13,16 @@ public class UserdataAdapter extends RecyclerView.Adapter<UserdataAdapter.MyView
     private List<Userdata> dataList;
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
-        public TextView username, dist, cycletime, speed, energy, cycle, tree, gas;
+        public TextView rank, username, dist, cycletime, speed, energy, tree, gas;
 
         public MyViewHolder(View view) {
             super(view);
+            rank = (TextView) view.findViewById(R.id.txtr_rank);
             username = (TextView) view.findViewById(R.id.txtr_user);
             dist = (TextView) view.findViewById(R.id.txtr_dist);
             cycletime = (TextView) view.findViewById(R.id.txtr_time);
             speed = (TextView) view.findViewById(R.id.txtr_speed);
             energy = (TextView) view.findViewById(R.id.txtr_energy);
-            cycle = (TextView) view.findViewById(R.id.txtr_rev);
             tree = (TextView) view.findViewById(R.id.txtr_tree);
             gas = (TextView) view.findViewById(R.id.txtr_co2);
         }
@@ -44,12 +44,12 @@ public class UserdataAdapter extends RecyclerView.Adapter<UserdataAdapter.MyView
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position) {
         Userdata data = dataList.get(position);
+        holder.rank.setText(data.getRank());
         holder.username.setText(data.getUsername());
         holder.dist.setText(data.getDist());
         holder.cycletime.setText(data.getCycletime());
         holder.speed.setText(data.getSpeed());
         holder.energy.setText(data.getEnergy());
-        holder.cycle.setText(data.getCycle());
         holder.tree.setText(data.getTree());
         holder.gas.setText(data.getGas());
     }

@@ -59,7 +59,7 @@ public class MainActivity extends Activity {
     private StringBuilder recDataString = new StringBuilder();
 
     private ConnectedThread mConnectedThread;
-    private static final UUID BTMODULEUUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
+    private static final UUID BTMODULEUUID = UUID.fromString("0000ffe0-0000-1000-8000-00805f9b34fb");
     private static String address;
 
     boolean first = true, isStarted = false;

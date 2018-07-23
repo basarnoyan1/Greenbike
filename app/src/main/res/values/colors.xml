@@ -8,4 +8,5 @@
     <color name="history_color">#fde434</color>
     <color name="save_color">#9efd38</color>
     <color name="hot">#ff8b67</color>
+    <color name="tphot">#50ff8b67</color>
 </resources>

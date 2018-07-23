@@ -3,6 +3,7 @@ package io.evall.greenbike;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -36,6 +37,7 @@ import java.util.Map;
 
 public class RanklistActivity extends AppCompatActivity {
     SharedPreferences sharedpref;
+    ConstraintLayout item_back;
     List<Userdata> dataList = new ArrayList<>();
     RecyclerView recyclerView;
     UserdataAdapter mAdapter;
@@ -82,7 +84,8 @@ public class RanklistActivity extends AppCompatActivity {
                         JSONArray userdata = response.getJSONArray("userdata");
                         for (int i = 0; i < userdata.length(); i++) {
                             JSONObject data = userdata.getJSONObject(i);
-
+                            Integer owner = data.getInt("owner");
+                            String rank = data.getString("rank");
                             String name = data.getString("username");
                             String dist = data.getString("dist")+" km";
 
@@ -90,15 +93,19 @@ public class RanklistActivity extends AppCompatActivity {
                             String speed = data.getString("speed")+" km/h";
                             String energy = data.getString("energy")+" cal";
 
-                            String cycle = data.getString("cycle")+" tur";
                             String tree = data.getString("tree")+" ağaç";
                             String gas = data.getString("gas")+" g CO2";
 
                             if(!dist.startsWith("null")){
-                                Userdata data1 = new Userdata(name,dist,cycletime,speed,energy,cycle,tree,gas);
+                                Userdata data1 = new Userdata(rank,name,dist,cycletime,speed,energy,tree,gas);
                                 dataList.add(data1);
                             }
 
+                            /*if(owner == 1){
+
+                                item_back = (ConstraintLayout) findViewById(R.id.txtr_back);
+                                item_back.setBackgroundColor(getResources().getColor(R.color.tphot));
+                            }*/
                         }
                         Log.w("Test","Bitti!");
                         mAdapter.notifyDataSetChanged();

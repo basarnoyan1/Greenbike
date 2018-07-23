@@ -46,6 +46,7 @@ public class DeviceListActivity extends Activity {
         setContentView(R.layout.device_list);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
+        registerReceiver(mReceiver, filter);
         if (savedInstanceState == null) {
             Bundle extras = getIntent().getExtras();
             if (extras == null) {
@@ -56,7 +57,6 @@ public class DeviceListActivity extends Activity {
         } else {
             errormsg = (Boolean) savedInstanceState.getSerializable("ConnectionFailure");
         }
-        registerReceiver(mReceiver, filter);
         vie = findViewById(R.id.view);
         textView1 = (TextView) findViewById(R.id.connecting);
         prg = (ProgressBar) findViewById(R.id.progressBar);
@@ -141,12 +141,19 @@ public class DeviceListActivity extends Activity {
             String action = intent.getAction();
             if (BluetoothDevice.ACTION_FOUND.equals(action)) {
                 BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-                if (device.getName().startsWith("GREENBIKE")) {
-                    mPairedDevicesArrayAdapter.add(device.getName() + "\n" + device.getAddress());
+                try{
+                    if (device.getName().startsWith("GREENBIKE") && mPairedDevicesArrayAdapter.getPosition(device.getName() + "\n" + device.getAddress()) == -1 ) {
+                            mPairedDevicesArrayAdapter.add(device.getName() + "\n" + device.getAddress());
+                    }
                 }
+                catch(Exception e){}
             }
         }
     };
 
-
+    @Override
+    public void onPause() {
+        super.onPause();
+        unregisterReceiver(mReceiver);
+    }
 }
