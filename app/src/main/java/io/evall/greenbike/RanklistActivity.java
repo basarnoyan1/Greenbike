@@ -97,15 +97,9 @@ public class RanklistActivity extends AppCompatActivity {
                             String gas = data.getString("gas")+" g CO2";
 
                             if(!dist.startsWith("null")){
-                                Userdata data1 = new Userdata(rank,name,dist,cycletime,speed,energy,tree,gas);
+                                Userdata data1 = new Userdata(owner,rank,name,dist,cycletime,speed,energy,tree,gas);
                                 dataList.add(data1);
                             }
-
-                            /*if(owner == 1){
-
-                                item_back = (ConstraintLayout) findViewById(R.id.txtr_back);
-                                item_back.setBackgroundColor(getResources().getColor(R.color.tphot));
-                            }*/
                         }
                         Log.w("Test","Bitti!");
                         mAdapter.notifyDataSetChanged();

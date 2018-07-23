@@ -75,7 +75,6 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="8dp"
                 android:layout_marginEnd="16dp"
-                android:layout_marginRight="16dp"
                 android:textAppearance="@android:style/TextAppearance.Material.Small"
                 android:textSize="20sp"
                 android:textStyle="bold"

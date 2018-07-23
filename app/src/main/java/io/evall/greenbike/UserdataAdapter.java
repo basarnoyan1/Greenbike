@@ -1,5 +1,7 @@
 package io.evall.greenbike;
 
+import android.graphics.Color;
+import android.support.constraint.ConstraintLayout;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,9 +16,11 @@ public class UserdataAdapter extends RecyclerView.Adapter<UserdataAdapter.MyView
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
         public TextView rank, username, dist, cycletime, speed, energy, tree, gas;
+        public ConstraintLayout row;
 
         public MyViewHolder(View view) {
             super(view);
+            row = (ConstraintLayout) view.findViewById(R.id.txtr_back);
             rank = (TextView) view.findViewById(R.id.txtr_rank);
             username = (TextView) view.findViewById(R.id.txtr_user);
             dist = (TextView) view.findViewById(R.id.txtr_dist);
@@ -25,6 +29,7 @@ public class UserdataAdapter extends RecyclerView.Adapter<UserdataAdapter.MyView
             energy = (TextView) view.findViewById(R.id.txtr_energy);
             tree = (TextView) view.findViewById(R.id.txtr_tree);
             gas = (TextView) view.findViewById(R.id.txtr_co2);
+
         }
     }
 
@@ -44,6 +49,9 @@ public class UserdataAdapter extends RecyclerView.Adapter<UserdataAdapter.MyView
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position) {
         Userdata data = dataList.get(position);
+        if(data.getOwner() == 1) {
+            holder.row.setBackgroundColor(Color.argb(80, 255, 139, 103));
+        }
         holder.rank.setText(data.getRank());
         holder.username.setText(data.getUsername());
         holder.dist.setText(data.getDist());

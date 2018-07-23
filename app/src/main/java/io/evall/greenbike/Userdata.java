@@ -1,13 +1,15 @@
 package io.evall.greenbike;
 
 public class Userdata {
+    private Integer owner;
     private String rank, username, dist, cycletime, speed, energy, tree, gas;
 
     public Userdata() {
     }
 
-    public Userdata(String rank, String username, String dist, String cycletime,
+    public Userdata(Integer owner, String rank, String username, String dist, String cycletime,
                     String speed, String energy, String tree, String gas) {
+        this.owner = owner;
         this.rank = rank;
         this.username = username;
         this.dist = dist;
@@ -16,6 +18,13 @@ public class Userdata {
         this.energy = energy;
         this.tree = tree;
         this.gas = gas;
+    }
+
+    public Integer getOwner() {
+        return owner;
+    }
+    public void setOwner(Integer owner) {
+        this.owner = owner;
     }
 
     public String getRank() {
