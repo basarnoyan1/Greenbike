@@ -19,8 +19,8 @@ public class SampleGattAttributes {
         attributes.put("00002a29-0000-1000-8000-00805f9b34fb", "Manufacturer Name String");
     }
 
-    public static String lookup(String uuid, String defaultName) {
+    public static String lookup(String uuid) {
         String name = attributes.get(uuid);
-        return name == null ? defaultName : name;
+        return name;
     }
 }
