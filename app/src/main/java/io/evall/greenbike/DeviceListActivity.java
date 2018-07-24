@@ -9,7 +9,6 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.AdapterView;
@@ -26,7 +25,6 @@ public class DeviceListActivity extends Activity {
     TextView textView1;
     View vie;
     private ArrayAdapter<String> mPairedDevicesArrayAdapter;
-    public static String EXTRA_DEVICE_ADDRESS = "device_address";
     private BluetoothAdapter mBtAdapter;
     private boolean mScanning;
     private Handler mHandler;
@@ -42,7 +40,7 @@ public class DeviceListActivity extends Activity {
 
         mHandler = new Handler();
         if (!getPackageManager().hasSystemFeature(PackageManager.FEATURE_BLUETOOTH_LE)) {
-            Toast.makeText(this, "Cihazınız Bluetooth LE özelliğini desteklememektedir.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Cihazınız Bluetooth Low Energy özelliğini desteklememektedir.", Toast.LENGTH_SHORT).show();
             finish();
         }
 
@@ -92,17 +90,18 @@ public class DeviceListActivity extends Activity {
 
     private OnItemClickListener mDeviceClickListener = new OnItemClickListener() {
         public void onItemClick(AdapterView<?> av, View v, int arg2, long arg3) {
-            textView1.setText(getString(R.string.bl_con_key));
-            prg.setVisibility(View.VISIBLE);
-            vie.setVisibility(View.INVISIBLE);
             String info = ((TextView) v).getText().toString();
             String address = info.substring(info.length() - 17);
             Intent i = new Intent(DeviceListActivity.this, MainActivity.class);
-            i.putExtra(EXTRA_DEVICE_ADDRESS, address);
+            i.putExtra(MainActivity.EXTRAS_DEVICE_NAME, info);
+            i.putExtra(MainActivity.EXTRAS_DEVICE_ADDRESS, address);
             if (mScanning) {
                 mBtAdapter.stopLeScan(mLeScanCallback);
                 mScanning = false;
             }
+            textView1.setText(getString(R.string.bl_con_key));
+            prg.setVisibility(View.VISIBLE);
+            vie.setVisibility(View.INVISIBLE);
             startActivity(i);
             finish();
         }
@@ -139,7 +138,6 @@ public class DeviceListActivity extends Activity {
                             try {
                                 if (device.getName().startsWith("GREENBIKE") && mPairedDevicesArrayAdapter.getPosition(device.getName() + "\n" + device.getAddress()) == -1) {
                                     mPairedDevicesArrayAdapter.add(device.getName() + "\n" + device.getAddress());
-                                    Log.d("DeviceList","Cihaz eklendi.");
                                 }
                             } catch (Exception e) {
                             }
