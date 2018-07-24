@@ -8,6 +8,7 @@ buildscript {
     }
 }
 apply plugin: 'com.android.application'
+apply plugin: 'com.google.firebase.firebase-perf'
 
 repositories {
     maven { url 'https://maven.fabric.io/public' }
@@ -21,8 +22,8 @@ android {
         applicationId "io.evall.greenbike"
         minSdkVersion 18
         targetSdkVersion 27
-        versionCode 37
-        versionName "1.6.1"
+        versionCode 39
+        versionName "1.6.3"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
@@ -43,6 +44,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-config:16.0.0'
     implementation 'com.google.firebase:firebase-messaging:17.1.0'
     implementation 'com.google.firebase:firebase-invites:16.0.1'
+    implementation 'com.google.firebase:firebase-perf:16.0.0'
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
