@@ -376,7 +376,7 @@ public class MainActivity extends Activity {
                 isStarted = true;
             }
 
-            sensorView2.setText(Integer.toString(value - frnum) + " tur");
+            sensorView2.setText(Integer.toString(value +1 - frnum) + " tur");
             sensorView4.setText(String.format(Locale.US, "%.3f", ((value - frnum) * peri / 1000)) + " km");
             long chrtime = SystemClock.elapsedRealtime() - sensorView3.getBase();
 
