@@ -38,7 +38,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
@@ -169,11 +168,11 @@ public class MainActivity extends Activity {
             }
         });
 
-        sensorView4 = (TextView) findViewById(R.id.sensorView4);
-        sensorView5 = (TextView) findViewById(R.id.sensorView5);
-        sensorView6 = (TextView) findViewById(R.id.sensorView6);
-        sensorView7 = (TextView) findViewById(R.id.sensorView7);
-        sensorView8 = (TextView) findViewById(R.id.sensorView8);
+        sensorView4 = findViewById(R.id.sensorView4);
+        sensorView5 = findViewById(R.id.sensorView5);
+        sensorView6 = findViewById(R.id.sensorView6);
+        sensorView7 = findViewById(R.id.sensorView7);
+        sensorView8 = findViewById(R.id.sensorView8);
         hist = findViewById(R.id.hisCard);
         save = findViewById(R.id.saveCard);
         rank = findViewById(R.id.rankCard);
@@ -498,15 +497,9 @@ public class MainActivity extends Activity {
                 for (BluetoothGattCharacteristic gattCharacteristic : gattCharacteristics) {
                     uuid = gattCharacteristic.getUuid().toString();
                     mNotifyCharacteristic = gattCharacteristic;
-                    return;
+                    //return;
                 }
             }
         }
-        /*for (BluetoothGattService gattService : gattServices) {
-            characteristicTX = gattService.getCharacteristic(BluetoothLeService.UUID_HM_RX_TX);
-            mBluetoothLeService.readCharacteristic(characteristicTX);
-            characteristicRX = gattService.getCharacteristic(BluetoothLeService.UUID_HM_RX_TX);
-            mBluetoothLeService.readCharacteristic(characteristicRX);
-        }*/
     }
 }
