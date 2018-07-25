@@ -2,18 +2,22 @@ package io.evall.greenbike;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.bluetooth.BluetoothAdapter;
-import android.bluetooth.BluetoothDevice;
-import android.bluetooth.BluetoothSocket;
+import android.app.Dialog;
+import android.bluetooth.BluetoothGattCharacteristic;
+import android.bluetooth.BluetoothGattService;
+import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
-import android.os.Handler;
+import android.os.IBinder;
 import android.os.SystemClock;
 import android.support.design.widget.Snackbar;
 import android.support.v7.widget.CardView;
@@ -22,7 +26,6 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.Chronometer;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -33,52 +36,107 @@ import com.android.volley.toolbox.Volley;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 public class MainActivity extends Activity {
+    private static String mDeviceAddress;
+    boolean mConnected = false;
     SharedPreferences sharedpref;
     TextView nametxt, sensorView2, sensorView4, sensorView5, sensorView6, sensorView7, sensorView8;
     Chronometer sensorView3;
     String name, salt, date, dist, time, speed, energy, pedal, tree, carbo;
-    Handler bluetoothIn;
     CardView hist, save, rank;
-    View img;
+    View img, img2;
     long lasttime;
-    final int handlerState = 0;
-    private BluetoothAdapter btAdapter = null;
-    private BluetoothSocket btSocket = null;
-    private StringBuilder recDataString = new StringBuilder();
-
-    private ConnectedThread mConnectedThread;
-    private static final UUID BTMODULEUUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
-    private static String address;
-
     boolean first = true, isStarted = false;
     int frnum;
     double tire_dia = 0.66; //Lastik çapı 26"
-    double acc = 9.80665; //
     int wei, hei, age;
     String gen;
-    double total_energy = 0.0;
     double peri = Math.PI * tire_dia;
+    private BluetoothLeService mBluetoothLeService;
+    private BluetoothGattCharacteristic mNotifyCharacteristic;
+    private StringBuilder recDataString = new StringBuilder();
+    private BluetoothGattCharacteristic characteristicTX;
+    private BluetoothGattCharacteristic characteristicRX;
+    public final static UUID HM_RX_TX =
+            UUID.fromString(SampleGattAttributes.HM_RX_TX);
+    private final String LIST_NAME = "NAME";
+    private final String LIST_UUID = "UUID";
+
+    private final ServiceConnection mServiceConnection = new ServiceConnection() {
+
+        @Override
+        public void onServiceConnected(ComponentName componentName, IBinder service) {
+            mBluetoothLeService = ((BluetoothLeService.LocalBinder) service).getService();
+            if (!mBluetoothLeService.initialize()) {
+                Log.e("MainActivity", "Unable to initialize Bluetooth");
+                finish();
+            }
+            mBluetoothLeService.connect(mDeviceAddress);
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName componentName) {
+            mBluetoothLeService = null;
+        }
+    };
+
+    private final BroadcastReceiver mGattUpdateReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            final String action = intent.getAction();
+            if (BluetoothLeService.ACTION_GATT_CONNECTED.equals(action)) {
+                mConnected = true;
+            } else if (BluetoothLeService.ACTION_GATT_DISCONNECTED.equals(action)) {
+                mConnected = false;
+            } else if (BluetoothLeService.ACTION_GATT_SERVICES_DISCOVERED.equals(action)) {
+                displayGattServices(mBluetoothLeService.getSupportedGattServices());
+                if (mNotifyCharacteristic != null) {
+                    final int charaProp = mNotifyCharacteristic.getProperties();
+                    if ((charaProp | BluetoothGattCharacteristic.PROPERTY_READ) > 0) {
+                        mBluetoothLeService.readCharacteristic(mNotifyCharacteristic);
+                    }
+                    if ((charaProp | BluetoothGattCharacteristic.PROPERTY_NOTIFY) > 0) {
+                        mBluetoothLeService.setCharacteristicNotification(mNotifyCharacteristic, true);
+                    }
+                }
+            } else if (BluetoothLeService.ACTION_DATA_AVAILABLE.equals(action)) {
+                onDataReceived(intent.getStringExtra(BluetoothLeService.EXTRA_DATA));
+            }
+        }
+    };
+
+    private static IntentFilter makeGattUpdateIntentFilter() {
+        final IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(BluetoothLeService.ACTION_GATT_CONNECTED);
+        intentFilter.addAction(BluetoothLeService.ACTION_GATT_DISCONNECTED);
+        intentFilter.addAction(BluetoothLeService.ACTION_GATT_SERVICES_DISCOVERED);
+        intentFilter.addAction(BluetoothLeService.ACTION_DATA_AVAILABLE);
+        return intentFilter;
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.activity_main);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-        nametxt = (TextView) findViewById(R.id.name);
+
+        Intent intent = getIntent();
+        mDeviceAddress = intent.getStringExtra(DeviceListActivity.EXTRA_DEVICE_ADDRESS);
+        Intent gattServiceIntent = new Intent(this, BluetoothLeService.class);
+        bindService(gattServiceIntent, mServiceConnection, BIND_AUTO_CREATE);
+        nametxt = findViewById(R.id.name);
         img = findViewById(R.id.view11);
+        img2 = findViewById(R.id.view4);
         sharedpref = getSharedPreferences("appData", Context.MODE_PRIVATE);
 
         name = sharedpref.getString("userName", null);
@@ -89,8 +147,8 @@ public class MainActivity extends Activity {
         gen = sharedpref.getString("userGender", "Erkek");
 
         nametxt.setText(getString(R.string.hello_key) + ", " + name + "!");
-        sensorView2 = (TextView) findViewById(R.id.sensorView2);
-        sensorView3 = (Chronometer) findViewById(R.id.sensorView3);
+        sensorView2 = findViewById(R.id.sensorView2);
+        sensorView3 = findViewById(R.id.sensorView3);
         sensorView3.setText("00:00:00");
         sensorView3.setOnChronometerTickListener(new Chronometer.OnChronometerTickListener() {
             @Override
@@ -107,79 +165,28 @@ public class MainActivity extends Activity {
                     snackbar.show();
                     save.callOnClick();
                 }
-                boolean bl = btSocket.isConnected();
-                if (!btSocket.isConnected()) {
-                    try {
-                        btSocket.connect();
-                        mConnectedThread = new ConnectedThread(btSocket);
-                        mConnectedThread.start();
-                        mConnectedThread.write("x");
-                    } catch (IOException e) {
-                    }
-                }
             }
         });
 
-        sensorView4 = (TextView) findViewById(R.id.sensorView4);
-        sensorView5 = (TextView) findViewById(R.id.sensorView5);
-        sensorView6 = (TextView) findViewById(R.id.sensorView6);
-        sensorView7 = (TextView) findViewById(R.id.sensorView7);
-        sensorView8 = (TextView) findViewById(R.id.sensorView8);
-        hist = (CardView) findViewById(R.id.hisCard);
-        save = (CardView) findViewById(R.id.saveCard);
-        rank = (CardView) findViewById(R.id.rankCard);
+        sensorView4 = findViewById(R.id.sensorView4);
+        sensorView5 = findViewById(R.id.sensorView5);
+        sensorView6 = findViewById(R.id.sensorView6);
+        sensorView7 = findViewById(R.id.sensorView7);
+        sensorView8 = findViewById(R.id.sensorView8);
+        hist = findViewById(R.id.hisCard);
+        save = findViewById(R.id.saveCard);
+        rank = findViewById(R.id.rankCard);
 
         Configuration newConfig = getResources().getConfiguration();
         if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            nametxt.setVisibility(View.INVISIBLE);
-            img.setVisibility(View.INVISIBLE);
+            nametxt.setVisibility(View.GONE);
+            img.setVisibility(View.GONE);
+            img2.setVisibility(View.GONE);
         } else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
             nametxt.setVisibility(View.VISIBLE);
             img.setVisibility(View.VISIBLE);
+            img2.setVisibility(View.VISIBLE);
         }
-
-        bluetoothIn = new Handler() {
-            public void handleMessage(android.os.Message msg) {
-                if (msg.what == handlerState) {
-                    String readMessage = (String) msg.obj;
-                    recDataString.append(readMessage);
-                    int endOfLineIndex = recDataString.indexOf("~");
-                    if (endOfLineIndex > 0) {
-                        String dataInPrint = recDataString.substring(0, endOfLineIndex);
-                        String sensor0 = dataInPrint.substring(dataInPrint.indexOf("#b4z8") + 5, dataInPrint.length());
-                        int value = Integer.parseInt(sensor0);
-                        recDataString.delete(0, recDataString.length());
-                        if (first) {
-                            frnum = value;
-                            first = !first;
-                            sensorView3.setBase(SystemClock.elapsedRealtime());
-                            sensorView3.setText("00:00:00");
-                            sensorView3.start();
-                            isStarted = true;
-                        }
-
-                        sensorView2.setText(Integer.toString(value - frnum) + " tur");
-                        sensorView4.setText(String.format(Locale.US, "%.3f", ((value - frnum) * peri / 1000)) + " km");
-                        long chrtime = SystemClock.elapsedRealtime() - sensorView3.getBase();
-
-                        BigDecimal co = new BigDecimal(chrtime / 1000 * 0.125);
-                        co = co.setScale(2, BigDecimal.ROUND_DOWN);
-                        sensorView7.setText(co.toString().replace(",", ".") + " g CO2");
-
-                        BigDecimal tr = new BigDecimal(chrtime * 6.25 / 100000);
-                        tr = tr.divide(new BigDecimal(1000));
-                        tr = tr.setScale(2, BigDecimal.ROUND_DOWN);
-                        sensorView8.setText(tr.toString().replace(",", ".") + " ağaç");
-
-                        sensorView5.setText(String.format(Locale.US, "%.1f", 3600 * peri / (chrtime - lasttime)) + " km/h");
-                        double sped = Double.parseDouble(String.format(Locale.US, "%.1f", 3600 * peri / (chrtime - lasttime)));
-                        sensorView6.setText(getCal(gen, hei, wei, age, sped));
-                        lasttime = chrtime;
-                        dataInPrint = " ";
-                    }
-                }
-            }
-        };
 
         save.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -206,7 +213,7 @@ public class MainActivity extends Activity {
                                     appr_time(chrtime, 2) + "klima çalıştırabilir ve\n" +
                                     appr_time(chrtime, 3) + "basınçlı hava üretebilirdin."
                     );
-                    alertDialog.setButton("Tamam", new DialogInterface.OnClickListener() {
+                    alertDialog.setButton(Dialog.BUTTON_POSITIVE, "Tamam", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
                         }
                     });
@@ -243,75 +250,58 @@ public class MainActivity extends Activity {
                     Log.w("Success", "İşlem başarılı! (1)");
                     snackbar.show();
                 } catch (IOException e) {
-                    try {
-                        FileOutputStream fos = openFileOutput("history.txt", getApplicationContext().MODE_PRIVATE);
-                        fos.write(strText.getBytes());
-                        fos.close();
-                        Log.w("Success", "İşlem başarılı! (2)");
-                        snackbar.show();
-                    } catch (IOException e2) {
-                    }
                 }
-
                 first = true;
 
-
-                ///////////////////////////
-                if (isOnline()) {
-                    try {
-                        String url = "http://greenbike.evall.io/api.php";
-                        RequestQueue queue = Volley.newRequestQueue(MainActivity.this);
-                        StringRequest putRequest = new StringRequest(Request.Method.POST, url,
-                                new Response.Listener<String>() {
-                                    @Override
-                                    public void onResponse(String response) {
-                                    }
-                                },
-                                new Response.ErrorListener() {
-                                    @Override
-                                    public void onErrorResponse(VolleyError error) {
-                                        Log.e("Error", error.toString());
-                                    }
+                if (isOnline()) try {
+                    String url = "http://greenbike.evall.io/api.php";
+                    RequestQueue queue = Volley.newRequestQueue(MainActivity.this);
+                    StringRequest putRequest = new StringRequest(Request.Method.POST, url,
+                            new Response.Listener<String>() {
+                                @Override
+                                public void onResponse(String response) {
                                 }
-                        ) {
-                            @Override
-                            protected Map<String, String> getParams() {
-                                Map<String, String> params = new HashMap<String, String>();
-                                params.put("username", name);
-                                params.put("salt", salt);
-                                params.put("dist", dist.substring(0, dist.lastIndexOf(" km")).replace(",", "."));
-                                params.put("cycletime", time);
-                                params.put("speed", speed.substring(0, speed.lastIndexOf(" km/h")).replace(",", "."));
-                                params.put("energy", energy.substring(0, energy.lastIndexOf(" cal")).replace(",", "."));
-                                params.put("cycle", pedal.substring(0, pedal.lastIndexOf(" " + getString(R.string.tour_key))));
-                                params.put("tree", tree.substring(0, tree.lastIndexOf(" " + getString(R.string.tree_key))).replace(",", "."));
-                                params.put("gas", carbo.substring(0, carbo.lastIndexOf(" g")).replace(",", "."));
-                                params.put("actionid", "400");
-                                return params;
+                            },
+                            new Response.ErrorListener() {
+                                @Override
+                                public void onErrorResponse(VolleyError error) {
+                                    Log.e("Error", error.toString());
+                                }
                             }
-                        };
-                        queue.add(putRequest);
-                    } catch (Exception e) {
-                    }
+                    ) {
+                        @Override
+                        protected Map<String, String> getParams() {
+                            Map<String, String> params = new HashMap<>();
+                            params.put("username", name);
+                            params.put("salt", salt);
+                            params.put("dist", dist.substring(0, dist.lastIndexOf(" km")).replace(",", "."));
+                            params.put("cycletime", time);
+                            params.put("speed", speed.substring(0, speed.lastIndexOf(" km/h")).replace(",", "."));
+                            params.put("energy", energy.substring(0, energy.lastIndexOf(" cal")).replace(",", "."));
+                            params.put("cycle", pedal.substring(0, pedal.lastIndexOf(" " + getString(R.string.tour_key))));
+                            params.put("tree", tree.substring(0, tree.lastIndexOf(" " + getString(R.string.tree_key))).replace(",", "."));
+                            params.put("gas", carbo.substring(0, carbo.lastIndexOf(" g")).replace(",", "."));
+                            params.put("actionid", "400");
+                            return params;
+                        }
+                    };
+                    queue.add(putRequest);
+                } catch (Exception e) {
                 }
-                /////////////////////////////////
-
             }
         });
-
         hist.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 Intent i = new Intent(MainActivity.this, HistoryView.class);
-                i.putExtra("device_address", address);
+                i.putExtra("device_address", mDeviceAddress);
                 startActivity(i);
             }
         });
-
         rank.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 if (isOnline()) {
                     Intent i = new Intent(MainActivity.this, RanklistActivity.class);
-                    i.putExtra("device_address", address);
+                    i.putExtra("device_address", mDeviceAddress);
                     startActivity(i);
                 } else {
                     Snackbar snackbar = Snackbar
@@ -320,134 +310,93 @@ public class MainActivity extends Activity {
                 }
             }
         });
-
-        btAdapter = BluetoothAdapter.getDefaultAdapter();       // get Bluetooth adapter
-        checkBTState();
     }
 
-
-    private BluetoothSocket createBluetoothSocket(BluetoothDevice device) throws IOException {
-
-        return device.createRfcommSocketToServiceRecord(BTMODULEUUID);
-        //creates secure outgoing connecetion with BT device using UUID
-    }
     @Override
-    public void onResume() {
+    protected void onResume() {
         super.onResume();
-        Intent intent = getIntent();
-        address = intent.getStringExtra(DeviceListActivity.EXTRA_DEVICE_ADDRESS);
-        try {
-            BluetoothDevice device = btAdapter.getRemoteDevice(address);
-            btSocket = createBluetoothSocket(device);
-        } catch (Exception e) {
-            Toast.makeText(getBaseContext(), "Socket creation failed", Toast.LENGTH_LONG).show();
+        registerReceiver(mGattUpdateReceiver, makeGattUpdateIntentFilter());
+        if (mBluetoothLeService != null) {
+            final boolean result = mBluetoothLeService.connect(mDeviceAddress);
+            Log.d("MainActivity", "Connect request result=" + result);
         }
-        try {
-            btSocket.connect();
-        } catch (IOException e) {
-            try {
-                //btSocket.close();
-            } catch (Exception e2) {
-                //insert code to deal with this
-            }
-        }
-        mConnectedThread = new ConnectedThread(btSocket);
-        mConnectedThread.start();
-        mConnectedThread.write("x");
     }
 
     @Override
-    public void onPause() {
+    protected void onPause() {
         super.onPause();
+        unregisterReceiver(mGattUpdateReceiver);
         if (isStarted) {
             save.callOnClick();
         }
     }
 
     @Override
-    protected void onStop() {
-        super.onStop();
+    protected void onDestroy() {
+        super.onDestroy();
+        unbindService(mServiceConnection);
+        mBluetoothLeService = null;
     }
-    private void checkBTState() {
 
-        if (btAdapter == null) {
-            Toast.makeText(getBaseContext(), "Cihazınızda Bluetooth özelliği bulunmamaktadır.", Toast.LENGTH_LONG).show();
-        } else {
-            if (btAdapter.isEnabled()) {
-            } else {
-                Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-                startActivityForResult(enableBtIntent, 1);
-            }
-        }
-    }
-    private class ConnectedThread extends Thread {
-        private final InputStream mmInStream;
-        private final OutputStream mmOutStream;
-
-        //creation of the connect thread
-        public ConnectedThread(BluetoothSocket socket) {
-            InputStream tmpIn = null;
-            OutputStream tmpOut = null;
-
-            try {
-                //Create I/O streams for connection
-                tmpIn = socket.getInputStream();
-                tmpOut = socket.getOutputStream();
-            } catch (IOException e) {
-            }
-
-            mmInStream = tmpIn;
-            mmOutStream = tmpOut;
-        }
-
-        public void run() {
-            byte[] buffer = new byte[256];
-            int bytes;
-
-            // Keep looping to listen for received messages
-            while (true) {
-                try {
-                    bytes = mmInStream.read(buffer);            //read bytes from input buffer
-                    String readMessage = new String(buffer, 0, bytes);
-                    // Send the obtained bytes to the UI Activity via handler
-                    bluetoothIn.obtainMessage(handlerState, bytes, -1, readMessage).sendToTarget();
-                } catch (IOException e) {
-                    break;
-                }
-            }
-        }
-
-        public void write(String input) {
-            byte[] msgBuffer = input.getBytes();           //converts entered String into bytes
-            try {
-                mmOutStream.write(msgBuffer);                //write bytes over BT connection via outstream
-            } catch (IOException e) {
-                if (pedal == null) {
-                    Intent i = new Intent(MainActivity.this, DeviceListActivity.class);
-                    i.putExtra("ConnectionFailure", true);
-                    startActivity(i);
-                    //finish();
-                }
-            }
-        }
-    }
     public boolean isOnline() {
         ConnectivityManager cm =
                 (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo netInfo = cm.getActiveNetworkInfo();
         return netInfo != null && netInfo.isConnectedOrConnecting();
     }
+
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
         if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            nametxt.setVisibility(View.INVISIBLE);
-            img.setVisibility(View.INVISIBLE);
+            nametxt.setVisibility(View.GONE);
+            img.setVisibility(View.GONE);
+            img2.setVisibility(View.GONE);
         } else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
             nametxt.setVisibility(View.VISIBLE);
             img.setVisibility(View.VISIBLE);
+            img2.setVisibility(View.VISIBLE);
         }
     }
+
+    private void onDataReceived(String data) {
+        recDataString.append(data);
+        int endOfLineIndex = recDataString.indexOf("~");
+        if (endOfLineIndex > 0) {
+            String dataInPrint = recDataString.substring(0, endOfLineIndex);
+            String sensor0 = dataInPrint.substring(dataInPrint.indexOf("#b4z8") + 5, dataInPrint.length());
+            int value = Integer.parseInt(sensor0);
+            recDataString.delete(0, recDataString.length());
+            if (first) {
+                frnum = value;
+                first = !first;
+                sensorView3.setBase(SystemClock.elapsedRealtime());
+                sensorView3.setText("00:00:00");
+                sensorView3.start();
+                isStarted = true;
+            }
+
+            sensorView2.setText(Integer.toString(value +1 - frnum) + " tur");
+            sensorView4.setText(String.format(Locale.US, "%.3f", ((value - frnum) * peri / 1000)) + " km");
+            long chrtime = SystemClock.elapsedRealtime() - sensorView3.getBase();
+
+            BigDecimal co = new BigDecimal(chrtime / 1000 * 0.125);
+            co = co.setScale(2, BigDecimal.ROUND_DOWN);
+            sensorView7.setText(co.toString().replace(",", ".") + " g CO2");
+
+            BigDecimal tr = new BigDecimal(chrtime * 6.25 / 100000);
+            tr = tr.divide(new BigDecimal(1000));
+            tr = tr.setScale(2, BigDecimal.ROUND_DOWN);
+            sensorView8.setText(tr.toString().replace(",", ".") + " ağaç");
+
+            sensorView5.setText(String.format(Locale.US, "%.1f", 3600 * peri / (chrtime - lasttime)) + " km/h");
+            double sped = Double.parseDouble(String.format(Locale.US, "%.1f", 3600 * peri / (chrtime - lasttime)));
+            sensorView6.setText(getCal(gen, hei, wei, age, sped));
+            lasttime = chrtime;
+            dataInPrint = " ";
+        }
+    }
+
     public String getCal(String gender, int he, int we, int ag, double spe) {
         double bmr;
         double mets;
@@ -484,7 +433,6 @@ public class MainActivity extends Activity {
         }
 
         long chrt = SystemClock.elapsedRealtime() - sensorView3.getBase();
-        ;
         BigDecimal tim = new BigDecimal(chrt / 3600);
         BigDecimal bd1 = new BigDecimal(bmr * mets / 24);
         BigDecimal res = tim.multiply(bd1);
@@ -492,6 +440,7 @@ public class MainActivity extends Activity {
         res = res.setScale(1, BigDecimal.ROUND_DOWN);
         return res.toString().replace(",", ".") + " cal";
     }
+
     public String appr_time(long tim, int code) {
         String res = null;
         switch (code) {
@@ -536,6 +485,21 @@ public class MainActivity extends Activity {
         return res;
     }
 
+    private void displayGattServices(List<BluetoothGattService> gattServices) {
+        if (gattServices == null) return;
+        for (BluetoothGattService gattService : gattServices) {
+            String uuid = gattService.getUuid().toString();
+            String serviceString = SampleGattAttributes.lookup(uuid);
+            if (serviceString != null) {
+                List<BluetoothGattCharacteristic> gattCharacteristics =
+                        gattService.getCharacteristics();
 
+                for (BluetoothGattCharacteristic gattCharacteristic : gattCharacteristics) {
+                    uuid = gattCharacteristic.getUuid().toString();
+                    mNotifyCharacteristic = gattCharacteristic;
+                    //return;
+                }
+            }
+        }
+    }
 }
-
