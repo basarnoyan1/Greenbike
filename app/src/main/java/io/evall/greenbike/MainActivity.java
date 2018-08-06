@@ -90,8 +90,6 @@ public class MainActivity extends Activity {
                 mConnected = true;
             } else if (BluetoothLeService.ACTION_GATT_DISCONNECTED.equals(action)) {
                 mConnected = false;
-                Intent i = new Intent(MainActivity.this, DeviceListActivity.class);
-                startActivity(i);
             } else if (BluetoothLeService.ACTION_GATT_SERVICES_DISCOVERED.equals(action)) {
                 displayGattServices(mBluetoothLeService.getSupportedGattServices());
                 if (mNotifyCharacteristic != null) {
@@ -158,6 +156,9 @@ public class MainActivity extends Activity {
                             .make(sensorView3, getString(R.string.autosave_key), Snackbar.LENGTH_LONG);
                     snackbar.show();
                     save.callOnClick();
+                    Intent i = new Intent(MainActivity.this, DeviceListActivity.class);
+                    startActivity(i);
+                    finish();
                 }
             }
         });
