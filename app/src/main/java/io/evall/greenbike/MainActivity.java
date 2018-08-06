@@ -63,15 +63,6 @@ public class MainActivity extends Activity {
     String gen;
     double peri = Math.PI * tire_dia;
     private BluetoothLeService mBluetoothLeService;
-    private BluetoothGattCharacteristic mNotifyCharacteristic;
-    private StringBuilder recDataString = new StringBuilder();
-    private BluetoothGattCharacteristic characteristicTX;
-    private BluetoothGattCharacteristic characteristicRX;
-    public final static UUID HM_RX_TX =
-            UUID.fromString(SampleGattAttributes.HM_RX_TX);
-    private final String LIST_NAME = "NAME";
-    private final String LIST_UUID = "UUID";
-
     private final ServiceConnection mServiceConnection = new ServiceConnection() {
 
         @Override
@@ -89,7 +80,8 @@ public class MainActivity extends Activity {
             mBluetoothLeService = null;
         }
     };
-
+    private BluetoothGattCharacteristic mNotifyCharacteristic;
+    private StringBuilder recDataString = new StringBuilder();
     private final BroadcastReceiver mGattUpdateReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -98,6 +90,8 @@ public class MainActivity extends Activity {
                 mConnected = true;
             } else if (BluetoothLeService.ACTION_GATT_DISCONNECTED.equals(action)) {
                 mConnected = false;
+                Intent i = new Intent(MainActivity.this, DeviceListActivity.class);
+                startActivity(i);
             } else if (BluetoothLeService.ACTION_GATT_SERVICES_DISCOVERED.equals(action)) {
                 displayGattServices(mBluetoothLeService.getSupportedGattServices());
                 if (mNotifyCharacteristic != null) {
@@ -376,7 +370,7 @@ public class MainActivity extends Activity {
                 isStarted = true;
             }
 
-            sensorView2.setText(Integer.toString(value +1 - frnum) + " tur");
+            sensorView2.setText(Integer.toString(value + 1 - frnum) + " tur");
             sensorView4.setText(String.format(Locale.US, "%.3f", ((value - frnum) * peri / 1000)) + " km");
             long chrtime = SystemClock.elapsedRealtime() - sensorView3.getBase();
 
@@ -495,9 +489,7 @@ public class MainActivity extends Activity {
                         gattService.getCharacteristics();
 
                 for (BluetoothGattCharacteristic gattCharacteristic : gattCharacteristics) {
-                    uuid = gattCharacteristic.getUuid().toString();
                     mNotifyCharacteristic = gattCharacteristic;
-                    //return;
                 }
             }
         }

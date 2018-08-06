@@ -22,17 +22,52 @@ import android.widget.Toast;
 
 
 public class DeviceListActivity extends Activity {
+    private static final int REQUEST_ENABLE_BT = 1;
+    private static final long SCAN_PERIOD = 3600000;
+    public static String EXTRA_DEVICE_ADDRESS = "device_address";
     ProgressBar prg;
     TextView textView1;
     View vie;
     private ArrayAdapter<String> mPairedDevicesArrayAdapter;
-    public static String EXTRA_DEVICE_ADDRESS = "device_address";
     private BluetoothAdapter mBtAdapter;
     private boolean mScanning;
     private Handler mHandler;
+    private BluetoothAdapter.LeScanCallback mLeScanCallback =
+            new BluetoothAdapter.LeScanCallback() {
 
-    private static final int REQUEST_ENABLE_BT = 1;
-    private static final long SCAN_PERIOD = 3600000;
+                @Override
+                public void onLeScan(final BluetoothDevice device, int rssi, byte[] scanRecord) {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            try {
+                                if (device.getName().startsWith("GREENBIKE") && mPairedDevicesArrayAdapter.getPosition(device.getName() + "\n" + device.getAddress()) == -1) {
+                                    mPairedDevicesArrayAdapter.add(device.getName() + "\n" + device.getAddress());
+                                    Log.d("DeviceList", "Cihaz eklendi.");
+                                }
+                            } catch (Exception e) {
+                            }
+                        }
+                    });
+                }
+            };
+    private OnItemClickListener mDeviceClickListener = new OnItemClickListener() {
+        public void onItemClick(AdapterView<?> av, View v, int arg2, long arg3) {
+            textView1.setText(getString(R.string.bl_con_key));
+            prg.setVisibility(View.VISIBLE);
+            vie.setVisibility(View.INVISIBLE);
+            String info = ((TextView) v).getText().toString();
+            String address = info.substring(info.length() - 17);
+            Intent i = new Intent(DeviceListActivity.this, MainActivity.class);
+            i.putExtra(EXTRA_DEVICE_ADDRESS, address);
+            if (mScanning) {
+                mBtAdapter.stopLeScan(mLeScanCallback);
+                mScanning = false;
+            }
+            startActivity(i);
+            finish();
+        }
+    };
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -90,24 +125,6 @@ public class DeviceListActivity extends Activity {
         scanLeDevice(false);
     }
 
-    private OnItemClickListener mDeviceClickListener = new OnItemClickListener() {
-        public void onItemClick(AdapterView<?> av, View v, int arg2, long arg3) {
-            textView1.setText(getString(R.string.bl_con_key));
-            prg.setVisibility(View.VISIBLE);
-            vie.setVisibility(View.INVISIBLE);
-            String info = ((TextView) v).getText().toString();
-            String address = info.substring(info.length() - 17);
-            Intent i = new Intent(DeviceListActivity.this, MainActivity.class);
-            i.putExtra(EXTRA_DEVICE_ADDRESS, address);
-            if (mScanning) {
-                mBtAdapter.stopLeScan(mLeScanCallback);
-                mScanning = false;
-            }
-            startActivity(i);
-            finish();
-        }
-    };
-
     private void scanLeDevice(final boolean enable) {
         if (enable) {
             // Stops scanning after a pre-defined scan period.
@@ -127,25 +144,5 @@ public class DeviceListActivity extends Activity {
             mBtAdapter.stopLeScan(mLeScanCallback);
         }
     }
-
-    private BluetoothAdapter.LeScanCallback mLeScanCallback =
-            new BluetoothAdapter.LeScanCallback() {
-
-                @Override
-                public void onLeScan(final BluetoothDevice device, int rssi, byte[] scanRecord) {
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            try {
-                                if (device.getName().startsWith("GREENBIKE") && mPairedDevicesArrayAdapter.getPosition(device.getName() + "\n" + device.getAddress()) == -1) {
-                                    mPairedDevicesArrayAdapter.add(device.getName() + "\n" + device.getAddress());
-                                    Log.d("DeviceList","Cihaz eklendi.");
-                                }
-                            } catch (Exception e) {
-                            }
-                        }
-                    });
-                }
-            };
 
 }
