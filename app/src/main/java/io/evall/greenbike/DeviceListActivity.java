@@ -7,8 +7,12 @@ import android.bluetooth.BluetoothManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.design.widget.Snackbar;
+import android.support.v7.widget.CardView;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
@@ -92,6 +96,27 @@ public class DeviceListActivity extends Activity {
         vie = findViewById(R.id.view);
         textView1 = (TextView) findViewById(R.id.connecting);
         prg = (ProgressBar) findViewById(R.id.progressBar);
+        CardView hist = findViewById(R.id.hisCard);
+        CardView rank = findViewById(R.id.rankCard);
+
+        hist.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                Intent i = new Intent(DeviceListActivity.this, HistoryView.class);
+                startActivity(i);
+            }
+        });
+        rank.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                if (isOnline()) {
+                    Intent i = new Intent(DeviceListActivity.this, RanklistActivity.class);
+                    startActivity(i);
+                } else {
+                    Snackbar snackbar = Snackbar
+                            .make(vie, "Sıralamaya erişebilmek için internet bağlantısı gerekmektedir.", Snackbar.LENGTH_LONG);
+                    snackbar.show();
+                }
+            }
+        });
     }
 
     @Override
@@ -144,5 +169,10 @@ public class DeviceListActivity extends Activity {
             mBtAdapter.stopLeScan(mLeScanCallback);
         }
     }
-
+    public boolean isOnline() {
+        ConnectivityManager cm =
+                (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo netInfo = cm.getActiveNetworkInfo();
+        return netInfo != null && netInfo.isConnectedOrConnecting();
+    }
 }

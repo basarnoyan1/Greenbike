@@ -288,7 +288,6 @@ public class MainActivity extends Activity {
         hist.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 Intent i = new Intent(MainActivity.this, HistoryView.class);
-                i.putExtra("device_address", mDeviceAddress);
                 startActivity(i);
             }
         });
@@ -296,7 +295,6 @@ public class MainActivity extends Activity {
             public void onClick(View v) {
                 if (isOnline()) {
                     Intent i = new Intent(MainActivity.this, RanklistActivity.class);
-                    i.putExtra("device_address", mDeviceAddress);
                     startActivity(i);
                 } else {
                     Snackbar snackbar = Snackbar
