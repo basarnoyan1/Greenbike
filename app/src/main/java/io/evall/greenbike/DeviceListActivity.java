@@ -96,8 +96,8 @@ public class DeviceListActivity extends Activity {
         vie = findViewById(R.id.view);
         textView1 = (TextView) findViewById(R.id.connecting);
         prg = (ProgressBar) findViewById(R.id.progressBar);
-        CardView hist = findViewById(R.id.hisCard);
-        CardView rank = findViewById(R.id.rankCard);
+        CardView hist = findViewById(R.id.hisCard2);
+        CardView rank = findViewById(R.id.rankCard2);
 
         hist.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
