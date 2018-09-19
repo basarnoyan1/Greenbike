@@ -29,6 +29,7 @@ public class DeviceListActivity extends Activity {
     private static final int REQUEST_ENABLE_BT = 1;
     private static final long SCAN_PERIOD = 3600000;
     public static String EXTRA_DEVICE_ADDRESS = "device_address";
+    public static String EXTRA_DEVICE_NAME = "device_name";
     ProgressBar prg;
     TextView textView1;
     View vie;
@@ -62,8 +63,10 @@ public class DeviceListActivity extends Activity {
             vie.setVisibility(View.INVISIBLE);
             String info = ((TextView) v).getText().toString();
             String address = info.substring(info.length() - 17);
+            String name = info.replace("\n"+address,"");
             Intent i = new Intent(DeviceListActivity.this, MainActivity.class);
             i.putExtra(EXTRA_DEVICE_ADDRESS, address);
+            i.putExtra(EXTRA_DEVICE_NAME,name);
             if (mScanning) {
                 mBtAdapter.stopLeScan(mLeScanCallback);
                 mScanning = false;

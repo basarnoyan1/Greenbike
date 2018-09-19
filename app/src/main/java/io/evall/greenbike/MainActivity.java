@@ -48,6 +48,7 @@ import java.util.concurrent.TimeUnit;
 
 public class MainActivity extends Activity {
     private static String mDeviceAddress;
+    private static String mDeviceName;
     boolean mConnected = false;
     SharedPreferences sharedpref;
     TextView nametxt, sensorView2, sensorView4, sensorView5, sensorView6, sensorView7, sensorView8;
@@ -57,6 +58,7 @@ public class MainActivity extends Activity {
     View img, img2;
     long lasttime;
     boolean first = true, isStarted = false;
+    boolean extratime = false;
     int frnum;
     double tire_dia = 0.66; //Lastik çapı 26"
     int wei, hei, age;
@@ -90,6 +92,21 @@ public class MainActivity extends Activity {
                 mConnected = true;
             } else if (BluetoothLeService.ACTION_GATT_DISCONNECTED.equals(action)) {
                 mConnected = false;
+                if (!sensorView4.getText().toString().equals("0 km") && !sensorView4.getText().toString().isEmpty()){
+                    extratime = true;
+                    save.callOnClick();
+                    if (extratime == false){
+                        Intent i = new Intent(MainActivity.this, DeviceListActivity.class);
+                        startActivity(i);
+                        finish();
+                    }
+                }
+                else {
+                    Intent i = new Intent(MainActivity.this, DeviceListActivity.class);
+                    startActivity(i);
+                    finish();
+                }
+
             } else if (BluetoothLeService.ACTION_GATT_SERVICES_DISCOVERED.equals(action)) {
                 displayGattServices(mBluetoothLeService.getSupportedGattServices());
                 if (mNotifyCharacteristic != null) {
@@ -124,6 +141,7 @@ public class MainActivity extends Activity {
 
         Intent intent = getIntent();
         mDeviceAddress = intent.getStringExtra(DeviceListActivity.EXTRA_DEVICE_ADDRESS);
+        mDeviceName = intent.getStringExtra(DeviceListActivity.EXTRA_DEVICE_NAME);
         Intent gattServiceIntent = new Intent(this, BluetoothLeService.class);
         bindService(gattServiceIntent, mServiceConnection, BIND_AUTO_CREATE);
         nametxt = findViewById(R.id.name);
@@ -151,15 +169,14 @@ public class MainActivity extends Activity {
                 int s = (int) (time - h * 3600000 - m * 60000) / 1000;
                 String t = (h < 10 ? "0" + h : h) + ":" + (m < 10 ? "0" + m : m) + ":" + (s < 10 ? "0" + s : s);
                 chronometer.setText(t);
-                if ((time - lasttime) > 5000) {
+
+                /*if ((time - lasttime) > 5000) {
                     Snackbar snackbar = Snackbar
                             .make(sensorView3, getString(R.string.autosave_key), Snackbar.LENGTH_LONG);
                     snackbar.show();
+                    extratime = true;
                     save.callOnClick();
-                    Intent i = new Intent(MainActivity.this, DeviceListActivity.class);
-                    startActivity(i);
-                    finish();
-                }
+                }*/
             }
         });
 
@@ -199,6 +216,7 @@ public class MainActivity extends Activity {
                 //
                 try {
                     long chrtime = SystemClock.elapsedRealtime() - sensorView3.getBase();
+                    extratime = false;
                     AlertDialog alertDialog = new AlertDialog.Builder(
                             MainActivity.this).create();
                     alertDialog.setTitle("Ürettiğin elektrik enerjisiyle:");
@@ -210,6 +228,11 @@ public class MainActivity extends Activity {
                     );
                     alertDialog.setButton(Dialog.BUTTON_POSITIVE, "Tamam", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
+                          if (extratime) {
+                            Intent i = new Intent(MainActivity.this, DeviceListActivity.class);
+                            startActivity(i);
+                            finish();
+                          }
                         }
                     });
                     alertDialog.show();
@@ -276,6 +299,8 @@ public class MainActivity extends Activity {
                             params.put("cycle", pedal.substring(0, pedal.lastIndexOf(" " + getString(R.string.tour_key))));
                             params.put("tree", tree.substring(0, tree.lastIndexOf(" " + getString(R.string.tree_key))).replace(",", "."));
                             params.put("gas", carbo.substring(0, carbo.lastIndexOf(" g")).replace(",", "."));
+                            params.put("bike", mDeviceName);
+
                             params.put("actionid", "400");
                             return params;
                         }

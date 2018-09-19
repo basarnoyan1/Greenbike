@@ -34,10 +34,10 @@
             android:configChanges="orientation|screenSize" />
         <activity android:name=".HistoryView"
             android:configChanges="orientation|screenSize"
-            android:parentActivityName=".MainActivity"/>
+            android:parentActivityName=".DeviceListActivity"/>
         <activity android:name=".RanklistActivity"
             android:configChanges="orientation|screenSize"
-            android:parentActivityName=".MainActivity"/>
+            android:parentActivityName=".DeviceListActivity"/>
         <service android:name=".BluetoothLeService" android:enabled="true"/>
         <meta-data
             android:name="io.fabric.ApiKey"

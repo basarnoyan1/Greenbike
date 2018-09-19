@@ -48,7 +48,7 @@ public class WelcomeActivity extends Activity {
     Button setbtn;
     EditText name, age, hei, wei;
     RadioButton male, female;
-    boolean isMale = true;
+    boolean isMale = true, error = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -136,8 +136,10 @@ public class WelcomeActivity extends Activity {
                                         SharedPreferences.Editor editr = sharedprf.edit();
                                         editr.putString("salt", resp);
                                         editr.commit();
+                                        error = false;
                                     } catch (JSONException j) {
                                         j.getMessage();
+                                        error = true;
                                     }
                                 }
                             },
@@ -157,8 +159,13 @@ public class WelcomeActivity extends Activity {
                         }
                     };
                     queue.add(postRequest);
-                    Intent intent = new Intent(WelcomeActivity.this, DeviceListActivity.class);
-                    startActivity(intent);
+
+                    if (error == false){
+                        Intent intent = new Intent(WelcomeActivity.this, DeviceListActivity.class);
+                        startActivity(intent);
+                        finish();
+                    }
+
                 } else {
                     Snackbar snackbar = Snackbar
                             .make(name, getString(R.string.wlc_check_key), Snackbar.LENGTH_SHORT);
